@@ -1,0 +1,10 @@
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '8.0'
+use_frameworks!
+
+target 'Where U At' do
+  pod 'Starscream', '1.1.1'
+  pod 'Alamofire', '~> 3.0'
+  pod 'SwiftyJSON', :git => 'https://github.com/SwiftyJSON/SwiftyJSON.git'
+  pod 'JSQMessagesViewController', '7.2.0'
+end
