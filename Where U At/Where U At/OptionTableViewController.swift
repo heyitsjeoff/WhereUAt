@@ -19,7 +19,7 @@ class OptionTableViewController: UITableViewController {
     }
     
     func loadSettings(){
-        let viewFriends = Option(name: "View Friends")
+        let viewFriends = Option(name: "Friends")
         let settings = Option(name: "Settings")
         let signOut = Option(name: "Sign Out")
         let credits = Option(name: "Credits")
