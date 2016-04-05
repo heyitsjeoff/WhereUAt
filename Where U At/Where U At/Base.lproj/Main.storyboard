@@ -96,7 +96,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="131" y="319"/>
+            <point key="canvasLocation" x="143" y="341"/>
         </scene>
         <!--Messages-->
         <scene sceneID="Mip-oQ-qu7">
@@ -150,11 +150,7 @@
                                 <segue destination="uG5-Ym-o4m" kind="show" id="em9-AU-Io5"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="hmk-1R-Z4s">
-                            <connections>
-                                <segue destination="Kyh-2n-5Jr" kind="presentation" identifier="MessageFriend" id="iz4-hK-nan"/>
-                            </connections>
-                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="hmk-1R-Z4s"/>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rdN-3G-DSg" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -177,9 +173,9 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mgo-XE-aQ7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1619" y="-378"/>
+            <point key="canvasLocation" x="1613" y="1058"/>
         </scene>
-        <!--New Message-->
+        <!--Friends-->
         <scene sceneID="Koh-nh-sPK">
             <objects>
                 <tableViewController id="27s-hd-wZm" customClass="FriendTableViewController" customModule="Where_U_At" customModuleProvider="target" sceneMemberID="viewController">
@@ -213,22 +209,17 @@
                             <outlet property="delegate" destination="27s-hd-wZm" id="fck-PY-w8H"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="New Message" id="SNc-lN-Ix2">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="650-lc-Mjn">
+                    <navigationItem key="navigationItem" title="Friends" id="SNc-lN-Ix2">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="SX1-vS-KbS">
                             <connections>
-                                <action selector="cancel:" destination="27s-hd-wZm" id="R20-18-wnx"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="XhN-pX-K44">
-                            <connections>
-                                <action selector="addAFriend:" destination="27s-hd-wZm" id="n5o-4Q-RNi"/>
+                                <action selector="sendFriendRequest:" destination="27s-hd-wZm" id="5lR-mg-QOG"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pzJ-dg-9tE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2969" y="355"/>
+            <point key="canvasLocation" x="1631" y="-649"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="DWJ-Za-esj">
@@ -278,6 +269,7 @@
                                 <connections>
                                     <outlet property="settingsImage" destination="zts-RL-BSb" id="dvG-dW-hmS"/>
                                     <outlet property="settingsLabel" destination="5Yg-LL-Asw" id="8YO-eQ-bZQ"/>
+                                    <segue destination="27s-hd-wZm" kind="show" id="mpE-MP-ujj"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -290,24 +282,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uoR-f0-lZi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="897" y="-369"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="xis-bT-8Ms">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Kyh-2n-5Jr" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="dod-fq-Wa6">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="27s-hd-wZm" kind="relationship" relationship="rootViewController" id="u54-xF-MUK"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="TTA-F0-aJI" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2277" y="355"/>
         </scene>
     </scenes>
     <resources>

@@ -7,15 +7,9 @@
 //
 
 import UIKit
+import CoreData
 
-class Friend {
+class Friend : NSManagedObject{
     //MARK: Properties
-    var username: String
-    
-    init?(username: String){
-        self.username = username
-        if(username.isEmpty){
-            return nil
-        }
-    }
+    @NSManaged var username: String
 }

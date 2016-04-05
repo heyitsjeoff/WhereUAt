@@ -16,4 +16,5 @@ func signInCallBack(jsonResponse: JSON, theView: SignInViewController){
 
 func createAccountCallBack(jsonResponse: JSON, theView: SignInViewController){
     print(jsonResponse)
+    theView.alertCreateAnAcouunt(jsonResponse["success"].stringValue)
 }
