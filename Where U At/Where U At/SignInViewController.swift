@@ -16,7 +16,7 @@ class SignInViewController: UIViewController {
             signIn(usernameTF.text!, password: passwordTF.text!, theView: self)
         }//sign in action
         else{
-            if(passwordTF.text != password2TF.text){//if passwords don't match
+            if(passwordTF.text != password2TF.text){
                 let alert = UIAlertController(title: "Did Not Create Account",
                     message: "Passwords do not match",
                     preferredStyle: .Alert)
@@ -30,9 +30,10 @@ class SignInViewController: UIViewController {
                 presentViewController(alert,
                     animated: true,
                     completion: nil)
-            }else{
+            }//passwords don't match
+            else{
                 createAccount(usernameTF.text!,password:  passwordTF.text!, theView: self)
-            }
+            }//passwords do match
         }//create account action
         
     }
@@ -41,20 +42,24 @@ class SignInViewController: UIViewController {
     @IBAction func createAccountBTN(sender: UIButton) {
         if(signingIn == true){
             signingIn = false
-            password2TF.hidden = false;
-            create_an_account_ref.setTitle("Cancel", forState: .Normal)
-            sign_In_ref.setTitle("Create Account", forState: .Normal)
+            password2TF.hidden = false; //unhides the second password textfield
+            create_an_account_ref.setTitle("Cancel", forState: .Normal) //sets title of the Create An Account button to Cancel
+            sign_In_ref.setTitle("Create Account", forState: .Normal) //sets the title of the Sign In button to Create Account
         }//switch to create account view
         else{
             signingIn = true
-            password2TF.hidden = true;
-            create_an_account_ref.setTitle("Create an Account", forState: .Normal)
-            sign_In_ref.setTitle("Sign In", forState: .Normal)
+            password2TF.hidden = true; //hides the second password textfield
+            create_an_account_ref.setTitle("Create an Account", forState: .Normal) //sets the title of the Cancel button to Create An Account
+            sign_In_ref.setTitle("Sign In", forState: .Normal) //sets the title of the Create Account button to Sign In
         }//switch to sign in view
     }
     
+    /**
+    Presents an alert based on the success status of a login attempt. A successful login will transition to the
+    message table view and an unsuccessful login will leave the user at the sign in view
     
-    
+    @param success the success status of the login attempt
+    */
     func alertLogin(success: String){
         if(success == "true"){
             let alert = UIAlertController(title: "Where U At",
@@ -72,7 +77,7 @@ class SignInViewController: UIViewController {
             presentViewController(alert,
                 animated: true,
                 completion: nil)
-        }
+        }//sign in successful
         else if(success == "false"){
             let alert = UIAlertController(title: "Where U At",
                 message: "Username/password combination is incorrect!",
@@ -87,14 +92,20 @@ class SignInViewController: UIViewController {
             presentViewController(alert,
                 animated: true,
                 completion: nil)
-        }
+        }//sign in unsuccessful
     }
     
-    
+    /**
+     Presents an alert based on the success status of a create account attempt. A successful create
+     account will transition to the message table view and an unsuccessful create account
+     will leave the user at the sign in view
+     
+     @param success the success status of the login attempt
+     */
     func alertCreateAnAcouunt(success: String){
         if(success == "true"){
             let alert = UIAlertController(title: "Where U At",
-                message: "Your accound has been created!",
+                message: "Your account has been created!",
                 preferredStyle: .Alert)
             
             let okAction = UIAlertAction(title: "Thanks",
@@ -126,6 +137,7 @@ class SignInViewController: UIViewController {
         }
     }
     
+    ///hides the second password textfield and changes the transparency for all three text fields
     override func viewDidLoad() {
         super.viewDidLoad()
         password2TF.hidden = true;

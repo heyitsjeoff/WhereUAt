@@ -17,7 +17,6 @@ class FriendTableViewController: UITableViewController {
         
     }
     
-    
     @IBAction func sendFriendRequest(sender: UIBarButtonItem) {
         let alert = UIAlertController(title: "Add a friend",
             message: "Enter your friend's username",
@@ -32,8 +31,9 @@ class FriendTableViewController: UITableViewController {
             handler: { (action:UIAlertAction) -> Void in
                 
                 let textField = alert.textFields!.first
-                self.newMessage(textField!.text!)
-                self.tableView.reloadData()
+                sendRequest(textField!.text!)
+                //self.newMessage(textField!.text!)
+                //self.tableView.reloadData()
         })
         
         alert.addTextFieldWithConfigurationHandler {

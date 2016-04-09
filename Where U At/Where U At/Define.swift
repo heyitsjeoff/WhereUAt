@@ -15,9 +15,9 @@ class Variables{
     static let SERVER = "http://152.117.218.105:3000/"
     static let AUTHENTICATE = "http://152.117.218.105:3000/api/authenticate/"
     static let CREATE = "http://152.117.218.105:3000/api/create_account/"
+    static let SENDFRIENDREQUEST = "http://152.117.218.105:3000/api/send_friend_request/"
     static let FAILED = 0
     static let SUCCESS = 1
     static let NOTCONNECTED = 2
-    static let USERNAMETAKEN = 3
     
 }

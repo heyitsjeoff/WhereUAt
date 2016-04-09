@@ -64,3 +64,28 @@ func createAccount(username: String, password: String, theView: SignInViewContro
             }
     }
 }
+
+/**
+ Used to
+ 
+ @param username the username of the user
+ 
+ @param password the password of the user
+ 
+ @param theView the SignInViewController so we can call functions within their
+ */
+func sendRequest(username: String){
+    let friendRequest = [
+        "username": username
+    ]
+    
+    Alamofire.request(.POST, variables.SENDFRIENDREQUEST, parameters: friendRequest).responseJSON
+        { response in switch response.result {
+        case .Success(let jsonRes):
+            let json = JSON(jsonRes)
+            sendFriendRequestCallBack(json)
+        case .Failure(let error):
+            print("Request failed with error: \(error)")
+            }
+    }
+}
