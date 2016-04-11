@@ -12,6 +12,7 @@ import CoreData
 class FriendTableViewController: UITableViewController {
     
     var friends = [NSManagedObject]()
+    var pendingRequests = [NSManagedObject]()
     
     func newMessage(username: String){
         
@@ -31,7 +32,8 @@ class FriendTableViewController: UITableViewController {
             handler: { (action:UIAlertAction) -> Void in
                 
                 let textField = alert.textFields!.first
-                sendRequest(textField!.text!)
+                print(textField!.text!)
+                sendRequest(textField!.text!, theView: self)
                 //self.newMessage(textField!.text!)
                 //self.tableView.reloadData()
         })
@@ -64,6 +66,7 @@ class FriendTableViewController: UITableViewController {
         
         //2
         let fetchRequest = NSFetchRequest(entityName: "Friend")
+        //fetchRequest.predicate = NSPredicate(format: "isPending == @YES")
         
         //3
         do {
@@ -78,6 +81,7 @@ class FriendTableViewController: UITableViewController {
     func loadSampleFriends(){
         //saveFriend("Holly")
         //saveFriend("Moscar")
+        //savePendingFriend("Zipper")
     }
     
     func saveFriend(name: String) {
@@ -96,6 +100,7 @@ class FriendTableViewController: UITableViewController {
         
         //3
         friend.setValue(name, forKey: "username")
+        friend.setValue(false, forKey: "isPending")
         
         //4
         do {
@@ -107,20 +112,82 @@ class FriendTableViewController: UITableViewController {
         }
     }
     
+    func savePendingFriend(name: String) {
+        //1
+        let appDelegate =
+        UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext
+        
+        //2
+        let entity =  NSEntityDescription.entityForName("Friend",
+            inManagedObjectContext:managedContext)
+        
+        let friend = NSManagedObject(entity: entity!,
+            insertIntoManagedObjectContext: managedContext)
+        
+        //3
+        friend.setValue(name, forKey: "username")
+        friend.setValue(true, forKey: "isPending")
+        
+        //4
+        do {
+            try managedContext.save()
+            //5
+            pendingRequests.append(friend)
+        } catch let error as NSError  {
+            print("Could not save \(error), \(error.userInfo)")
+        }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
+    // MARK: - View Methods
+    
+    /**
+    Presents an alert based on the success status of a sending a friend request. A successful
+    sent friend request will let the user know of the success, and the same goes for an
+    unsuccessful one
+    
+    @param success the success status of the send request attempt
+    */
+    func alertSendRequest(success: String){
+        if(success == "true"){
+            let alert = UIAlertController(title: "Where U At",
+                message: "Your friend request has been sent!",
+                preferredStyle: .Alert)
+            
+            let okAction = UIAlertAction(title: "Yay",
+                style: .Default) { (action: UIAlertAction) -> Void in
+            }
+            
+            alert.addAction(okAction)
+            
+            presentViewController(alert,
+                animated: true,
+                completion: nil)
+        }
+        else if(success == "false"){
+            let alert = UIAlertController(title: "Where U At",
+                message: "Your friend request was not sent, please try again",
+                preferredStyle: .Alert)
+            
+            let okAction = UIAlertAction(title: "Cry",
+                style: .Default) { (action: UIAlertAction) -> Void in
+            }
+            
+            alert.addAction(okAction)
+            
+            presentViewController(alert,
+                animated: true,
+                completion: nil)
+        }
+    }
+    
     // MARK: - Table view data source
-    
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return friends.count
-    }
     
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -132,6 +199,30 @@ class FriendTableViewController: UITableViewController {
         cell.friendUsername.text = friend.valueForKey("username") as? String
         
         return cell
+    }
+    
+    // MARK: - Section 
+    
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if(section == 0){
+            return friends.count
+        }
+        else{
+            return pendingRequests.count
+        }
+    }
+    
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if(section == 0){
+            return "Friends"
+        }
+        else{
+            return "Pending Friend Requests"
+        }
     }
     
     

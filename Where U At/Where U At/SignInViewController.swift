@@ -1,4 +1,5 @@
 import UIKit
+import CoreData
 
 class SignInViewController: UIViewController {
 
@@ -65,6 +66,8 @@ class SignInViewController: UIViewController {
             let alert = UIAlertController(title: "Where U At",
                 message: "Welcome to the motherland!",
                 preferredStyle: .Alert)
+            
+            setCredentials(usernameTF.text!, password: passwordTF.text!)
             
             let okAction = UIAlertAction(title: "Wavy",
                 style: UIAlertActionStyle.Default) {
@@ -134,6 +137,35 @@ class SignInViewController: UIViewController {
             presentViewController(alert,
                 animated: true,
                 completion: nil)
+        }
+    }
+    
+    func setCredentials(username: String, password: String) {
+        //1
+        let appDelegate =
+        UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext
+        
+        //2
+        let entity =  NSEntityDescription.entityForName("Login",
+            inManagedObjectContext:managedContext)
+        
+        let login = NSManagedObject(entity: entity!,
+            insertIntoManagedObjectContext: managedContext)
+        
+        //3
+        login.setValue(username, forKey: "username")
+        login.setValue(password, forKey: "password")
+        login.setValue(true, forKey: "loginFlag")
+        setUsername(usernameTF.text!)
+        
+        //4
+        do {
+            try managedContext.save()
+            //5
+        } catch let error as NSError  {
+            print("Could not save \(error), \(error.userInfo)")
         }
     }
     

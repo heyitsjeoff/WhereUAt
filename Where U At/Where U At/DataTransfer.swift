@@ -11,6 +11,7 @@ import Alamofire
 import Starscream
 import SwiftyJSON
 let variables = Variables.self //static variables delcaration
+var myUsername = ""
 
 /**
  Used to sign a user in
@@ -36,6 +37,10 @@ func signIn(username: String, password: String, theView: SignInViewController){
             print("Request failed with error: \(error)")
             }
         }
+}
+
+func setUsername(theUsername: String){
+    myUsername = theUsername
 }
 
 /**
@@ -74,16 +79,17 @@ func createAccount(username: String, password: String, theView: SignInViewContro
  
  @param theView the SignInViewController so we can call functions within their
  */
-func sendRequest(username: String){
+func sendRequest(username: String, theView: FriendTableViewController){
     let friendRequest = [
-        "username": username
+        "toName" : username,
+        "fromName": myUsername
     ]
     
     Alamofire.request(.POST, variables.SENDFRIENDREQUEST, parameters: friendRequest).responseJSON
         { response in switch response.result {
         case .Success(let jsonRes):
             let json = JSON(jsonRes)
-            sendFriendRequestCallBack(json)
+            sendFriendRequestCallBack(json, theView: theView)
         case .Failure(let error):
             print("Request failed with error: \(error)")
             }

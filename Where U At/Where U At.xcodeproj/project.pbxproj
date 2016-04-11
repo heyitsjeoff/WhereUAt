@@ -26,6 +26,7 @@
 		2EDA439F1C8B9C5D002FEBA7 /* FriendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EDA439E1C8B9C5D002FEBA7 /* FriendTableViewCell.swift */; };
 		2EDA43A11C8B9EB3002FEBA7 /* FriendTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EDA43A01C8B9EB3002FEBA7 /* FriendTableViewController.swift */; };
 		2EDA43A31C8B9F00002FEBA7 /* Friend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EDA43A21C8B9F00002FEBA7 /* Friend.swift */; };
+		2EF8945B1CBB15FC00344F68 /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF8945A1CBB15FC00344F68 /* Socket.swift */; };
 		58B8B86B1389DE23290EC92B /* Pods_Where_U_At.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D31883B7CB93B066490DBBB8 /* Pods_Where_U_At.framework */; };
 /* End PBXBuildFile section */
 
@@ -52,6 +53,7 @@
 		2EDA439E1C8B9C5D002FEBA7 /* FriendTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FriendTableViewCell.swift; sourceTree = "<group>"; };
 		2EDA43A01C8B9EB3002FEBA7 /* FriendTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FriendTableViewController.swift; sourceTree = "<group>"; };
 		2EDA43A21C8B9F00002FEBA7 /* Friend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Friend.swift; sourceTree = "<group>"; };
+		2EF8945A1CBB15FC00344F68 /* Socket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		BC9D3F8603BCC713F5C0EB92 /* Pods-Where U At.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Where U At.release.xcconfig"; path = "Pods/Target Support Files/Pods-Where U At/Pods-Where U At.release.xcconfig"; sourceTree = "<group>"; };
 		D31883B7CB93B066490DBBB8 /* Pods_Where_U_At.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Where_U_At.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F35E05057B31C9A6F90C17A1 /* Pods-Where U At.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Where U At.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Where U At/Pods-Where U At.debug.xcconfig"; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 				2EB3031A1C83723900BF65AF /* Info.plist */,
 				2EB303121C83723900BF65AF /* Where_U_At.xcdatamodeld */,
 				2E4A74D61C87512200E46C39 /* DataTransfer.swift */,
+				2EF8945A1CBB15FC00344F68 /* Socket.swift */,
 				2E59BFF81C87B96D003E4E71 /* Define.swift */,
 				2EDA439B1C8B94BA002FEBA7 /* Where-U-At-Bridging-Header.h */,
 				2EDA439C1C8B95A7002FEBA7 /* UserMessageViewController.swift */,
@@ -259,6 +262,7 @@
 				2EDA439D1C8B95A7002FEBA7 /* UserMessageViewController.swift in Sources */,
 				2E5F879E1C8DCFCC00A4B068 /* CallBack.swift in Sources */,
 				2E4A74D71C87512200E46C39 /* DataTransfer.swift in Sources */,
+				2EF8945B1CBB15FC00344F68 /* Socket.swift in Sources */,
 				2EB3030E1C83723900BF65AF /* SignInViewController.swift in Sources */,
 				2ED74DAE1CA0E89100809DB1 /* OptionsTableViewCell.swift in Sources */,
 				2EDA43A31C8B9F00002FEBA7 /* Friend.swift in Sources */,

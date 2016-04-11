@@ -19,6 +19,7 @@ func createAccountCallBack(jsonResponse: JSON, theView: SignInViewController){
     theView.alertCreateAnAcouunt(jsonResponse["success"].stringValue)
 }
 
-func sendFriendRequestCallBack(jsonResponse: JSON){
+func sendFriendRequestCallBack(jsonResponse: JSON, theView: FriendTableViewController){
     print(jsonResponse)
+    theView.alertSendRequest(jsonResponse["success"].stringValue)
 }

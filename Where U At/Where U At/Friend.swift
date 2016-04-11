@@ -12,4 +12,5 @@ import CoreData
 class Friend : NSManagedObject{
     //MARK: Properties
     @NSManaged var username: String
+    @NSManaged var isPending: Bool
 }
