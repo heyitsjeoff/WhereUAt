@@ -7,27 +7,15 @@
 //
 
 import UIKit
-
+import CoreData
 /**
  Message class
  */
-class Message {
+class Message: NSManagedObject{
     //MARK: Properties
     
-    let senderUsername: String
-    let text: String
-    let messageID: Int
-    let timeSent: String
-    
-    //MARK: Initialization
-    init?(senderUsername: String, text: String, messageID: Int, timeSent: String){
-        self.senderUsername = senderUsername
-        self.text = text
-        self.messageID = messageID
-        self.timeSent = timeSent
-        
-        if(senderUsername.isEmpty || text.isEmpty || messageID < 0 || timeSent.isEmpty){
-            return nil
-        }
-    }
+    @NSManaged var senderUsername: String
+    @NSManaged var text: String
+    @NSManaged var messageID: Int
+    @NSManaged var outgoing: Bool
 }

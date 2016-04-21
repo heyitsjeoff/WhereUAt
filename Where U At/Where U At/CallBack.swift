@@ -23,3 +23,8 @@ func sendFriendRequestCallBack(jsonResponse: JSON, theView: FriendTableViewContr
     print(jsonResponse)
     theView.alertSendRequest(jsonResponse["success"].stringValue)
 }
+
+func respondFriendRequestCallBack(jsonResponse: JSON, theView: FriendTableViewController, username: String, theResponse: String){
+    print(jsonResponse)
+    theView.alertRespondRequest(jsonResponse["success"].stringValue, username: username, theResponse: theResponse)
+}

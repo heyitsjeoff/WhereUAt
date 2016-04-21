@@ -12,6 +12,8 @@ class FriendTableViewCell: UITableViewCell {
     // MARK: Properties
     @IBOutlet weak var friendUsername: UILabel!
     
+    @IBOutlet weak var newMessageFriendUsername: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

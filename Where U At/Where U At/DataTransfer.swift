@@ -11,7 +11,6 @@ import Alamofire
 import Starscream
 import SwiftyJSON
 let variables = Variables.self //static variables delcaration
-var myUsername = ""
 
 /**
  Used to sign a user in
@@ -37,10 +36,6 @@ func signIn(username: String, password: String, theView: SignInViewController){
             print("Request failed with error: \(error)")
             }
         }
-}
-
-func setUsername(theUsername: String){
-    myUsername = theUsername
 }
 
 /**
@@ -75,14 +70,12 @@ func createAccount(username: String, password: String, theView: SignInViewContro
  
  @param username the username of the user
  
- @param password the password of the user
- 
  @param theView the SignInViewController so we can call functions within their
  */
 func sendRequest(username: String, theView: FriendTableViewController){
     let friendRequest = [
-        "toName" : username,
-        "fromName": myUsername
+        "toUser" : username,
+        "fromUser": myUsername
     ]
     
     Alamofire.request(.POST, variables.SENDFRIENDREQUEST, parameters: friendRequest).responseJSON
@@ -90,6 +83,33 @@ func sendRequest(username: String, theView: FriendTableViewController){
         case .Success(let jsonRes):
             let json = JSON(jsonRes)
             sendFriendRequestCallBack(json, theView: theView)
+        case .Failure(let error):
+            print("Request failed with error: \(error)")
+            }
+    }
+}
+
+/**
+ Used to
+ 
+ @param username the username of the user
+ 
+ @param username the username of the friend being responded to
+ 
+ @param theView the SignInViewController so we can call functions within their
+ */
+func sendResponseToRequest(username: String, theResponse: String, theView: FriendTableViewController){
+    let friendRequest = [
+        "usernameFrom" : myUsername,
+        "usernameTo": username,
+        "response": theResponse
+    ]
+    
+    Alamofire.request(.POST, variables.RESPONDFRIENDREQUEST, parameters: friendRequest).responseJSON
+        { response in switch response.result {
+        case .Success(let jsonRes):
+            let json = JSON(jsonRes)
+            respondFriendRequestCallBack(json, theView: theView, username: username, theResponse: theResponse)
         case .Failure(let error):
             print("Request failed with error: \(error)")
             }

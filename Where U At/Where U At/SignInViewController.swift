@@ -1,7 +1,8 @@
 import UIKit
 import CoreData
+import Starscream
 
-class SignInViewController: UIViewController {
+class SignInViewController: UIViewController, WebSocketDelegate {
 
     @IBOutlet weak var usernameTF: UITextField! //text field for username
     @IBOutlet weak var passwordTF: UITextField! //text field for password
@@ -10,6 +11,32 @@ class SignInViewController: UIViewController {
     @IBOutlet weak var password2TF: UITextField! //text field for password2
     var signingIn = true //boolean state to determine if the user is signing in or creating an account
     let variables = Variables.self // declaration of static variables class
+    
+    //Socket
+    
+    let socket = WebSocket(url: NSURL(string: "ws://152.117.214.185:8081/")!)
+    
+    func websocketDidConnect(ws: WebSocket) {
+        print("websocket is connected")
+    }
+    
+    func websocketDidDisconnect(ws: WebSocket, error: NSError?) {
+        if let e = error {
+            print("websocket is disconnected: \(e.localizedDescription)")
+        } else {
+            print("websocket disconnected")
+        }
+    }
+    
+    func websocketDidReceiveMessage(ws: WebSocket, text: String) {
+        print("Received text: \(text)")
+    }
+    
+    func websocketDidReceiveData(ws: WebSocket, data: NSData) {
+        print("Received data: \(data.length)")
+    }
+    
+    //Socket
     
     ///Will either attempt to sign the user in or create an account, based on the current status
     @IBAction func signInBTN(sender: UIButton) {
@@ -73,6 +100,7 @@ class SignInViewController: UIViewController {
                 style: UIAlertActionStyle.Default) {
                     UIALertAction in
                     self.performSegueWithIdentifier("MessageThreads", sender: nil)
+                    //-----------
             }
             
             alert.addAction(okAction)
@@ -176,6 +204,11 @@ class SignInViewController: UIViewController {
         usernameTF.alpha = 0.5
         passwordTF.alpha = 0.5
         password2TF.alpha = 0.5
+        
+        setUsername("")
+        
+        socket.delegate = self
+        socket.connect()
     }
 
 }

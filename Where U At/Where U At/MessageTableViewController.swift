@@ -7,34 +7,78 @@
 //
 
 import UIKit
+import CoreData
 
 class MessageTableViewController: UITableViewController {
     // MARK: Properties
     
-    var messages = [Message?]()
-    
-    /*
-    This value is either passed by `MealTableViewController` in 
-        `prepareForSegue(_:sender:)`
-    or constructed as part of adding a new meal.
-    */
-    var friend: Friend?
+    var threads = [Thread]()
+    var managedContext: NSManagedObjectContext?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        managedContext = appDelegate.managedObjectContext
         loadMessages()
     }
     
-    func loadMessages(){
-        let message1 = Message(senderUsername: "Jeoff", text: "Hello world", messageID: 1, timeSent: "13:34")
-        let message2 = Message(senderUsername: "Holly", text: "Molly is so adorable", messageID: 2, timeSent: "13:45")
-        let message3 = Message(senderUsername: "Oscar", text: "I am cuter than Molly", messageID: 3, timeSent: "13:47")
-        messages += [message1, message2, message3]
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        let messageFetchRequest = NSFetchRequest(entityName: "Message")
+        threads.removeAll()
+        do {
+            let results =
+                try managedContext!.executeFetchRequest(messageFetchRequest)
+            let messages = results as! [NSManagedObject]
+            print("total message count: " + String(messages.count))
+            var listOfSenders = [String]()
+            for message in messages{
+                let name = message.valueForKey("senderUsername") as? String
+                if(!listOfSenders.contains(name!)){
+                    listOfSenders.append(name!)
+                    let thread = Thread(username: name!)
+                    threads.append(thread)
+                }
+//                let name = friend.valueForKey("username") as? String
+//                let thread = Thread(username: name!)
+//                threads.append(thread)
+            }
+        } catch let error as NSError {
+            print("Could not fetch \(error), \(error.userInfo)")
+        }
+        print("the thread count is " + String(threads.count))
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    func loadMessages(){
+//        saveMessage("molly", text: "hey, hows it going?", messageID: 3, outgoing: false)
+//        saveMessage("zipper", text: "food!", messageID: 4, outgoing: false)
+//        saveMessage("molly", text: "jk i dont care. wheres oscar?", messageID: 5, outgoing: false)
+//        saveMessage("molly", text: "oscar is home", messageID: 6, outgoing: true)
+    }
+    
+    func saveMessage(senderUsername: String, text: String, messageID: Int, outgoing: Bool){
+        let entity =  NSEntityDescription.entityForName("Message",
+                                                        inManagedObjectContext:managedContext!)
+        
+        let message = NSManagedObject(entity: entity!,
+                                     insertIntoManagedObjectContext: managedContext)
+        
+        //3
+        message.setValue(senderUsername, forKey: "senderUsername")
+        message.setValue(text, forKey: "text")
+        message.setValue(messageID, forKey: "messageID")
+        message.setValue(outgoing, forKey: "outgoing")
+        
+        //4
+        do {
+            try managedContext!.save()
+            //5
+            //messages.append(message)
+        } catch let error as NSError  {
+            print("Could not save \(error), \(error.userInfo)")
+        }
     }
 
     // MARK: - Table view data source
@@ -44,7 +88,7 @@ class MessageTableViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return messages.count
+        return threads.count
     }
 
     
@@ -53,11 +97,11 @@ class MessageTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier,
             forIndexPath: indexPath) as! MessageTableViewCell
         
-        let message = messages[indexPath.row]
-
-        cell.nameLabel.text = message?.senderUsername
+        let thread = threads[indexPath.row]
+        let message = thread.lastMessage
+        cell.nameLabel.text = message!.valueForKey("senderUsername") as? String
         //image cell.userImageView.image = message.photo
-        cell.messageLabel.text = message?.text
+        cell.messageLabel.text = message!.valueForKey("text") as? String
 
         return cell
     }
@@ -91,7 +135,7 @@ class MessageTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
             // Delete the row from the data source
-            messages.removeAtIndex(indexPath.row)
+            threads.removeAtIndex(indexPath.row)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
         } else if editingStyle == .Insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -116,16 +160,16 @@ class MessageTableViewController: UITableViewController {
 
     
     // MARK: - Navigation
-
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "ShowMessage"{
             if let userMessageViewController = segue.destinationViewController as? UserMessageViewController{
                 if let selectedMessageCell = sender as? MessageTableViewCell{
                     let indexPath = tableView.indexPathForCell(selectedMessageCell)
-                    let selectedMessage = messages[indexPath!.row]
-                    userMessageViewController.username = selectedMessage?.senderUsername
-                    userMessageViewController.title = selectedMessage?.senderUsername
+                    let selectedThread = threads[indexPath!.row]
+                    userMessageViewController.username = selectedThread.username
+                    userMessageViewController.title = selectedThread.username
                 }
             }
         }
