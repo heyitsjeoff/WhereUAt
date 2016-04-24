@@ -18,6 +18,21 @@ class FriendTableViewController: UITableViewController {
     
     //MARK: - Actions
     
+    /**
+     Presents an alert for a user to respond to a friend request
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - username: the username of the user being responded to
+     
+     - version:
+     1.0
+     */
     func respondToRequest(username: String){
         let alert = UIAlertController(title: username,
                                       message: "How would you like to respond to \(username)'s request?",
@@ -50,6 +65,24 @@ class FriendTableViewController: UITableViewController {
                               completion: nil)
     }
     
+    /**
+     Button action to send a friend request
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - sender: the UIBarButtonItem that is pressed
+     
+     - version:
+     1.0
+     
+     After the button is pressed, an alert will be presented allowing the user to 
+     enter in a username to send a friend request to
+     */
     @IBAction func sendFriendRequest(sender: UIBarButtonItem) {
         let alert = UIAlertController(title: "Add a friend",
             message: "Enter your friend's username",
@@ -254,11 +287,19 @@ class FriendTableViewController: UITableViewController {
     // MARK: - Alert Functions
     
     /**
-     Presents an alert based on the success status of a sending a friend request. A successful
-     sent friend request will let the user know of the success, and the same goes for an
-     unsuccessful one
+     Presents an alert based on the success status of sending a friend request
      
-     @param success the success status of the send request attempt
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - success: the status of whether or not the friend request was sent
+     
+     - version:
+     1.0
      */
     func alertSendRequest(success: String){
         if(success == "true"){
@@ -294,11 +335,21 @@ class FriendTableViewController: UITableViewController {
     }
     
     /**
-     Presents an alert based on the success status of a sending a friend request. A successful
-     sent friend request will let the user know of the success, and the same goes for an
-     unsuccessful one
+     Presents an alert based on the success status of responding to a friend request
      
-     @param success the success status of the send request attempt
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - success: the status of whether or not the friend request response was sent
+        - username: the username of the user being responded to
+        - theResponse: the response to the friend request
+     
+     - version:
+     1.0
      */
     func alertRespondRequest(success: String, username: String, theResponse: String){
         if(success == "true"){

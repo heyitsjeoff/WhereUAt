@@ -115,3 +115,21 @@ func sendResponseToRequest(username: String, theResponse: String, theView: Frien
             }
     }
 }
+
+func sendMessage(username: String, text: String, location: Bool, theView: UserMessageViewController){
+    let message = [
+        "sender" : myUsername,
+        "receiver" : username,
+        "text" : text,
+        "location" : location.description
+    ]
+    Alamofire.request(.POST, variables.SENDMESSAGE, parameters: message).responseJSON
+        { response in switch response.result {
+        case .Success(let jsonRes):
+            let json = JSON(jsonRes)
+            sendMessageCallBack(json, theView: theView, username: username, text: text, location: location)
+        case .Failure(let error):
+            print("Request failed with error: \(error)")
+            }
+    }
+}

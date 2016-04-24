@@ -8,8 +8,18 @@
 
 import UIKit
 import CoreData
+
 /**
- Message class
+ A class to represent a message, of type NSManagedObject
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - returns:
+ void
+
+ - version:
+ 1.0
  */
 class Message: NSManagedObject{
     //MARK: Properties
@@ -18,4 +28,5 @@ class Message: NSManagedObject{
     @NSManaged var text: String
     @NSManaged var messageID: Int
     @NSManaged var outgoing: Bool
+    @NSManaged var location: Bool
 }

@@ -51,25 +51,70 @@ class MessageTableViewController: UITableViewController {
         print("the thread count is " + String(threads.count))
     }
     
-    func loadMessages(){
-//        saveMessage("molly", text: "hey, hows it going?", messageID: 3, outgoing: false)
-//        saveMessage("zipper", text: "food!", messageID: 4, outgoing: false)
-//        saveMessage("molly", text: "jk i dont care. wheres oscar?", messageID: 5, outgoing: false)
-//        saveMessage("molly", text: "oscar is home", messageID: 6, outgoing: true)
+    @IBAction func menuButtonPressed(sender: AnyObject) {
+        // 1
+        let actionSheet = UIAlertController(title: nil, message: "Menu", preferredStyle: .ActionSheet)
+        
+        // 2
+        let friendsAction = UIAlertAction(title: "Friends", style: .Default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            self.performSegueWithIdentifier("showFriends", sender: sender)
+        })
+        
+//        let settingsAction = UIAlertAction(title: "Settings", style: .Default, handler: {
+//            (alert: UIAlertAction!) -> Void in
+//            
+//        })
+        
+        let creditsAction = UIAlertAction(title: "Credits", style: .Default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            self.performSegueWithIdentifier("showCredits", sender: sender)
+        })
+        
+        let signOutAction = UIAlertAction(title: "Sign Out", style: .Default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            self.performSegueWithIdentifier("signOut", sender: sender)
+        })
+        
+        //
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: {
+            (alert: UIAlertAction!) -> Void in
+        })
+        
+        
+        // 4
+        actionSheet.addAction(friendsAction)
+        //actionSheet.addAction(settingsAction)
+        actionSheet.addAction(creditsAction)
+        actionSheet.addAction(signOutAction)
+        actionSheet.addAction(cancelAction)
+        
+        // 5
+        self.presentViewController(actionSheet, animated: true, completion: nil)
+
     }
     
-    func saveMessage(senderUsername: String, text: String, messageID: Int, outgoing: Bool){
+    
+    func loadMessages(){
+//        saveMessage("molly", text: "hey, hows it going?", messageID: 3, outgoing: false, location: false)
+//        saveMessage("zipper", text: "food!", messageID: 4, outgoing: false, location: false)
+//        saveMessage("molly", text: "jk i dont care. wheres oscar?", messageID: 5, outgoing: false, location: false)
+//        saveMessage("molly", text: "oscar is home", messageID: 6, outgoing: true, location: false)
+    }
+    
+    func saveMessage(senderUsername: String, text: String, messageID: Int, outgoing: Bool, location: Bool){
         let entity =  NSEntityDescription.entityForName("Message",
                                                         inManagedObjectContext:managedContext!)
         
         let message = NSManagedObject(entity: entity!,
-                                     insertIntoManagedObjectContext: managedContext)
+                                      insertIntoManagedObjectContext: managedContext)
         
         //3
         message.setValue(senderUsername, forKey: "senderUsername")
         message.setValue(text, forKey: "text")
         message.setValue(messageID, forKey: "messageID")
         message.setValue(outgoing, forKey: "outgoing")
+        message.setValue(location, forKey: "location")
         
         //4
         do {
@@ -79,6 +124,10 @@ class MessageTableViewController: UITableViewController {
         } catch let error as NSError  {
             print("Could not save \(error), \(error.userInfo)")
         }
+    }
+    
+    func signOut(){
+        print("Sign out pressed")
     }
 
     // MARK: - Table view data source
@@ -163,7 +212,7 @@ class MessageTableViewController: UITableViewController {
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "ShowMessage"{
+        if(segue.identifier == "ShowMessage"){
             if let userMessageViewController = segue.destinationViewController as? UserMessageViewController{
                 if let selectedMessageCell = sender as? MessageTableViewCell{
                     let indexPath = tableView.indexPathForCell(selectedMessageCell)
@@ -172,6 +221,16 @@ class MessageTableViewController: UITableViewController {
                     userMessageViewController.title = selectedThread.username
                 }
             }
+        }
+        else if(segue.identifier == "showFriends"){
+            segue.destinationViewController as? FriendTableViewController
+        }
+        else if(segue.identifier == "showCredits"){
+            segue.destinationViewController as? CreditsViewController
+        }
+        else if(segue.identifier == "signOut"){
+            signOut()
+            segue.destinationViewController as? SignInViewController
         }
     }
     

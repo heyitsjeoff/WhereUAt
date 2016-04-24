@@ -9,25 +9,64 @@
 import UIKit
 import CoreData
 
+/**
+ A thread is used to represent a collection of messages. These messages are between a user
+ and the user logged in to the device
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - version:
+ 1.0
+ */
 class Thread{
     
-    var username: String?
-    var managedContext: NSManagedObjectContext?
-    var messages = [NSManagedObject]()
-    var lastMessage: NSManagedObject?
+    var username: String? /*username of the thread participant*/
+    var managedContext: NSManagedObjectContext? /*managed context so data can be added*/
+    var messages = [NSManagedObject]() /*array of NSManagedObjects for messages*/
+    var lastMessage: NSManagedObject? /*last message in array*/
     
+    /**
+     Constructor for the thread of username
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - username: - the username of the thread participant
+     
+     - version:
+     1.0
+     
+     Sets the username for the thread and the managed context. Calls loadMessages passing
+     in the username as the parameter
+     */
     init(username: String){
-        self.username = username
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        managedContext = appDelegate.managedObjectContext
-        //print("loading messages for " + username)
-        loadMessages(username)
-        //print("messages done loading, count: " + String(messages.count))
-        lastMessage = messages.last
-        //print("last message: " + (lastMessage!.valueForKey("text") as? String)!)
+        self.username = username /*sets username upon initialization*/
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate /*gets the delegate*/
+        managedContext = appDelegate.managedObjectContext /*sets the managed context*/
+        loadMessages(username) /*loads messages into array for username*/
+        lastMessage = messages.last /*sets lastMessage*/
     }
     
+    /**
+     loads messages for username into the messages array of the Thread
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     
+     - parameters:
+        - username the username of the thread participant
+    */
     func loadMessages(username: String){
         let fetchRequest = NSFetchRequest(entityName: "Message")
         fetchRequest.predicate = NSPredicate(format: "senderUsername == %@", username)
@@ -41,6 +80,18 @@ class Thread{
         }
     }
     
+    /**
+     returns the array of messages in the thread
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     an array of NSManagedObjects of entity type Message
+     
+     - version:
+     1.0
+     */
     func getMessagesArray() -> [NSManagedObject]{
         return messages
     }

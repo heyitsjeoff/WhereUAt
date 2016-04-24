@@ -9,6 +9,15 @@
 import UIKit
 import CoreData
 
+/**
+ A class to represent a user who can be messaged, of type NSManagedObject
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - version:
+ 1.0
+ */
 class Friend : NSManagedObject{
     //MARK: Properties
     @NSManaged var username: String

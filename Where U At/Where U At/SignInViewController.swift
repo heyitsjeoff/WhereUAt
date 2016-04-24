@@ -2,6 +2,18 @@ import UIKit
 import CoreData
 import Starscream
 
+/**
+ The view controller for the SignInView
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - version:
+ 1.0
+ 
+ The sign in view will allow the user to either create an account or sign in. Once either
+ of those two actions are performed, the user will be signed in
+ */
 class SignInViewController: UIViewController, WebSocketDelegate {
 
     @IBOutlet weak var usernameTF: UITextField! //text field for username
@@ -127,11 +139,22 @@ class SignInViewController: UIViewController, WebSocketDelegate {
     }
     
     /**
-     Presents an alert based on the success status of a create account attempt. A successful create
-     account will transition to the message table view and an unsuccessful create account
-     will leave the user at the sign in view
+     Presents an alert based on the success status of creating an account
      
-     @param success the success status of the login attempt
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - success: the status of whether or not the friend request response was sent
+     
+     - version:
+     1.0
+     
+     A successful create account will transition to the message table view and an unsuccessful
+     create account will leave the user at the sign in view
      */
     func alertCreateAnAcouunt(success: String){
         if(success == "true"){
