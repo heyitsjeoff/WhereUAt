@@ -26,6 +26,8 @@ class Variables{
     static let CREATE = SERVER + "/api/create_account/"
     static let SENDFRIENDREQUEST = SERVER + "/api/send_friend_request/"
     static let RESPONDFRIENDREQUEST = SERVER + "/api/respond_friend_request/"
+    static let GETPENDINGREQUESTS = SERVER + "/api/get_pending_requests/"
+    static let GETFRIENDSLIST = SERVER + "/api/get_friends_list"
     static let SENDMESSAGE = SERVER + "/api/send_message/"
     static let GETMESSAGE = SERVER + "/api/get_message/"
     static let FAILED = 0

@@ -19,7 +19,8 @@ class FriendTableViewController: UITableViewController {
     //MARK: - Actions
     
     /**
-     Presents an alert for a user to respond to a friend request
+     Presents an alert for a user to respond to a friend request. An accept or decline will be sent
+     if the user does not cancel.
      
      - Author:
      Jeoff Villanueva
@@ -32,6 +33,8 @@ class FriendTableViewController: UITableViewController {
      
      - version:
      1.0
+     
+     This function is called when a FriendsTableViewCell is selected and is a pending requeset
      */
     func respondToRequest(username: String){
         let alert = UIAlertController(title: username,
@@ -114,13 +117,39 @@ class FriendTableViewController: UITableViewController {
             completion: nil)
     }
     
-    //MARK: - View Loading
+    
+    func getPendingFriendRequests(){
+        getPendingRequests(self)
+    }
+    
+    func getFriends(){
+        getFriendsList(self)
+    }
+    
+    //MARK: - Views
     
     override func viewDidLoad() {
         super.viewDidLoad()
         loadSampleFriends()
+        getFriends()
+        getPendingFriendRequests()
     }
     
+    /**
+     checks the local storage and updates the view with the friends list
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - animated: boolean for wheter or not to have animation
+     
+     - version:
+     1.0
+     */
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -163,6 +192,21 @@ class FriendTableViewController: UITableViewController {
     
     // MARK: - Core Data
     
+    /**
+     Saves a friend to the local storage
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - name: the name of the friend to be saved
+     
+     - version:
+     1.0
+     */
     func saveFriend(name: String) {
         //1
         let appDelegate =
@@ -190,6 +234,142 @@ class FriendTableViewController: UITableViewController {
         }
     }
     
+    // MARK: - Deletes
+    
+    /**
+     Deletes all friends from the local storage
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     
+     This is called during the update of the storage. The storage is purged of all friends to ensure there is
+     no duplicate during update
+     */
+    func deleteFriends(){
+        
+        //1
+        let appDelegate =
+            UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext
+        
+        let fetchRequest = NSFetchRequest(entityName: "Friend")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try managedContext.executeRequest(deleteRequest)
+            try managedContext.save()
+        } catch let error as NSError {
+            print("Could not save \(error), \(error.userInfo)")
+        }
+    }
+    
+    /**
+     Deletes all pending requests from the local storage
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     
+     This is called during the update of the storage. The storage is purged of all pending requests to ensure there is
+     no duplicate during update
+     */
+    func deletePendingRequests(){
+        
+        //1
+        let appDelegate =
+            UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext
+        
+        let fetchRequest = NSFetchRequest(entityName: "PendingFriend")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try managedContext.executeRequest(deleteRequest)
+            try managedContext.save()
+        } catch let error as NSError {
+            print("Could not save \(error), \(error.userInfo)")
+        }
+    }
+    
+    // MARK: - Update lists
+    
+    /**
+     Updates the local storage with the names of all friends for the signed in user
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - listOfNames: an array of names that represents the friends list
+     
+     - version:
+     1.0
+     */
+    func updateFriendsList(listOfNames: [String]){
+        print("updating friends list")
+        deleteFriends()
+        var tempName: String!
+        for friend in listOfNames{
+            tempName = friend
+            saveFriend(tempName)
+        }
+    }
+    
+    /**
+     Updates the local storage with the names of all pending requests for the signed in user
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+     - listOfNames: an array of names that represents the pending requests list
+     
+     - version:
+     1.0
+     */
+    func updatePendingRequests(listOfNames: [String]){
+        deletePendingRequests()
+        var tempName: String!
+        for friend in listOfNames{
+            tempName = friend
+            savePendingFriend(tempName)
+        }
+    }
+    
+    /**
+     Saves a pending request to the local storage
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - name: the name of the pending request to be saved
+     
+     - version:
+     1.0
+     */
     func savePendingFriend(name: String) {
         //1
         let appDelegate =
@@ -252,7 +432,6 @@ class FriendTableViewController: UITableViewController {
     }
     
     // MARK: - Table view data source
-    
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cellIdentifier = "FriendTableViewCell"
@@ -361,10 +540,13 @@ class FriendTableViewController: UITableViewController {
                                          style: .Default) { (action: UIAlertAction) -> Void in
                                             if(theResponse == "accept"){
                                                 self.deletePending(username)
-                                                self.saveFriend(username)
+                                                self.getFriends()
+                                                self.getPendingFriendRequests()
                                             }
                                             else if(theResponse == "decline"){
                                                 self.deletePending(username)
+                                                self.getFriends()
+                                                self.getPendingFriendRequests()
                                             }
             }
             
@@ -414,42 +596,6 @@ class FriendTableViewController: UITableViewController {
             return "Pending Friend Requests"
         }
     }
-    
-    
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-    // Return false if you do not want the specified item to be editable.
-    return true
-    }
-    */
-    
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-    if editingStyle == .Delete {
-    // Delete the row from the data source
-    tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-    } else if editingStyle == .Insert {
-    // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }
-    }
-    */
-    
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-    
-    }
-    */
-    
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-    // Return false if you do not want the item to be re-orderable.
-    return true
-    }
-    */
     
     /*
     // MARK: - Navigation

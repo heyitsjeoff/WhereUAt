@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Qrx-1o-HVm">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -233,7 +233,7 @@
                         <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="FriendTableViewCell" rowHeight="42" id="78j-17-ByC" customClass="FriendTableViewCell" customModule="Where_U_At" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="50" width="600" height="42"/>
+                                <rect key="frame" x="0.0" y="114" width="600" height="42"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="78j-17-ByC" id="c2c-iB-SP5">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="41"/>
@@ -346,9 +346,6 @@
                                                 <constraint firstItem="8Tg-SC-xmO" firstAttribute="centerY" secondItem="EMD-HQ-ivW" secondAttribute="centerY" id="sTc-mo-WQx"/>
                                             </constraints>
                                         </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="27s-hd-wZm" kind="show" id="NR7-na-lyZ"/>
-                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="12h-dE-9tw">
                                         <rect key="frame" x="0.0" y="170" width="600" height="44"/>
@@ -409,7 +406,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lDE-lV-fqG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="903" y="-492"/>
+            <point key="canvasLocation" x="1179" y="-1127"/>
         </scene>
         <!--Friends-->
         <scene sceneID="hoZ-ss-bOf">
@@ -443,6 +440,7 @@
                                 <connections>
                                     <outlet property="friendUsername" destination="aMs-87-kks" id="C8V-zc-4xb"/>
                                     <outlet property="newMessageFriendUsername" destination="aMs-87-kks" id="3HA-BO-sZK"/>
+                                    <segue destination="QP9-Bu-PI3" kind="show" identifier="showNewMessage" id="9SN-Ss-881"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -455,7 +453,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bpe-S7-9rg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2435" y="262"/>
+            <point key="canvasLocation" x="2413" y="328"/>
         </scene>
     </scenes>
     <resources>
@@ -463,6 +461,6 @@
         <image name="xeSQ6tv" width="3200" height="2592"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="NR7-na-lyZ"/>
+        <segue reference="9SN-Ss-881"/>
     </inferredMetricsTieBreakers>
 </document>

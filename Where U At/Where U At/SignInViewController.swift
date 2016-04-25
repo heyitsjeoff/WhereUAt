@@ -164,7 +164,7 @@ class SignInViewController: UIViewController, WebSocketDelegate {
             
             let okAction = UIAlertAction(title: "Thanks",
                 style: UIAlertActionStyle.Default) {
-                    UIALertAction in
+                    UIAlertAction in
                     self.performSegueWithIdentifier("MessageThreads", sender: nil)
             }
             
@@ -188,6 +188,32 @@ class SignInViewController: UIViewController, WebSocketDelegate {
             presentViewController(alert,
                 animated: true,
                 completion: nil)
+        }
+    }
+    
+    func checkIfSignedIn(){
+        let appDelegate =
+            UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext
+        
+        let fetchRequest = NSFetchRequest(entityName: "Login")
+        do {
+            let result =
+                try managedContext.executeFetchRequest(fetchRequest)
+            let credentials = result as! [NSManagedObject]
+            if(credentials.count != 0){
+                let login = credentials.first
+                let theCachedName = login!.valueForKey("username") as! String
+                print(theCachedName)
+                setUsername(theCachedName)
+                performSegueWithIdentifier("MessageThreads", sender: nil)
+            }
+            else{
+                print("not signed in")
+            }
+        } catch let error as NSError {
+            print("Could not fetch \(error), \(error.userInfo)")
         }
     }
     
@@ -220,6 +246,10 @@ class SignInViewController: UIViewController, WebSocketDelegate {
         }
     }
     
+    override func viewDidAppear(animated: Bool) {
+        checkIfSignedIn()
+    }
+    
     ///hides the second password textfield and changes the transparency for all three text fields
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -227,11 +257,9 @@ class SignInViewController: UIViewController, WebSocketDelegate {
         usernameTF.alpha = 0.5
         passwordTF.alpha = 0.5
         password2TF.alpha = 0.5
-        
         setUsername("")
-        
-        socket.delegate = self
-        socket.connect()
+        //socket.delegate = self
+        //socket.connect()
     }
 
 }

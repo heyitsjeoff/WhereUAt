@@ -8,12 +8,19 @@
 
 import UIKit
 
+/**
+ Displays the developers
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - version:
+ 1.0
+ */
 class CreditsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
 
 }

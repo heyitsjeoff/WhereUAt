@@ -38,6 +38,10 @@ class MapKitViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         
     }
     
+    func setLocation(latitude: String, longitude: String){
+        
+    }
+    
     override func didReceiveMemoryWarning()
     {
         super.didReceiveMemoryWarning()

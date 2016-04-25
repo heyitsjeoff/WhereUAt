@@ -33,3 +33,15 @@ func sendMessageCallBack(jsonResponse: JSON, theView: UserMessageViewController,
     let messageID = jsonResponse["messageID"].intValue
     theView.messageSent(username, text: text, messageID: messageID, location: location)
 }
+
+func getPendingFriendRequestsCallBack(jsonResponse: JSON, theView: FriendTableViewController){
+    print(jsonResponse)
+    let list = jsonResponse[myUsername].arrayValue.map { $0.string!}
+    theView.updatePendingRequests(list)
+}
+
+func getFriendsListCallBack(jsonResponse: JSON, theView: FriendTableViewController){
+    print(jsonResponse)
+    let list = jsonResponse[myUsername].arrayValue.map { $0.string!}
+    theView.updateFriendsList(list)
+}

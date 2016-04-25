@@ -116,6 +116,38 @@ func sendResponseToRequest(username: String, theResponse: String, theView: Frien
     }
 }
 
+func getPendingRequests(theView: FriendTableViewController){
+    let username = [
+        "username" : myUsername
+    ]
+    
+    Alamofire.request(.GET, variables.GETPENDINGREQUESTS, parameters: username).responseJSON
+        { response in switch response.result {
+        case .Success(let jsonRes):
+            let json = JSON(jsonRes)
+            getPendingFriendRequestsCallBack(json, theView: theView)
+        case .Failure(let error):
+            print("Request failed with error: \(error)")
+            }
+    }
+}
+
+func getFriendsList(theView: FriendTableViewController){
+    let username = [
+        "username": myUsername
+    ]
+    
+    Alamofire.request(.GET, variables.GETFRIENDSLIST, parameters: username).responseJSON
+        { response in switch response.result {
+        case .Success(let jsonRes):
+            let json = JSON(jsonRes)
+            getFriendsListCallBack(json, theView: theView)
+        case .Failure(let error):
+            print("Request failed with error: \(error)")
+            }
+    }
+}
+
 func sendMessage(username: String, text: String, location: Bool, theView: UserMessageViewController){
     let message = [
         "sender" : myUsername,

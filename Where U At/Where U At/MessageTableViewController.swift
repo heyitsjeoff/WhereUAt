@@ -128,6 +128,22 @@ class MessageTableViewController: UITableViewController {
     
     func signOut(){
         print("Sign out pressed")
+        //1
+        let appDelegate =
+            UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext
+        
+        let fetchRequest = NSFetchRequest(entityName: "Login")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try managedContext.executeRequest(deleteRequest)
+            try managedContext.save()
+        } catch let error as NSError {
+            print("Could not save \(error), \(error.userInfo)")
+        }
+        setUsername("")
     }
 
     // MARK: - Table view data source
