@@ -45,3 +45,13 @@ func getFriendsListCallBack(jsonResponse: JSON, theView: FriendTableViewControll
     let list = jsonResponse[myUsername].arrayValue.map { $0.string!}
     theView.updateFriendsList(list)
 }
+
+func getMessagesCallBack(jsonResponse: JSON, theView: UserMessageViewController){
+    print(jsonResponse)
+    let list = jsonResponse[myUsername]
+    theView.saveJSONMessages(list)
+}
+
+func deleteMessagesFromDatabaseCallBack(jsonResponse: JSON){
+    print(jsonResponse)
+}

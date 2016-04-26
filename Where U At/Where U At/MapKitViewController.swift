@@ -39,7 +39,7 @@ class MapKitViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     func setLocation(latitude: String, longitude: String){
-        
+        let center = CLLocationCoordinate2D(latitude: Double(latitude)!, longitude: Double(longitude)!)
     }
     
     override func didReceiveMemoryWarning()

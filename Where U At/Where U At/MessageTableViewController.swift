@@ -32,7 +32,6 @@ class MessageTableViewController: UITableViewController {
             let results =
                 try managedContext!.executeFetchRequest(messageFetchRequest)
             let messages = results as! [NSManagedObject]
-            print("total message count: " + String(messages.count))
             var listOfSenders = [String]()
             for message in messages{
                 let name = message.valueForKey("senderUsername") as? String
@@ -48,7 +47,6 @@ class MessageTableViewController: UITableViewController {
         } catch let error as NSError {
             print("Could not fetch \(error), \(error.userInfo)")
         }
-        print("the thread count is " + String(threads.count))
     }
     
     @IBAction func menuButtonPressed(sender: AnyObject) {

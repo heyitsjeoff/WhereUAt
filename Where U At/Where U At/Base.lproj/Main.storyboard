@@ -9,7 +9,7 @@
         <!--Sign In View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="SignInViewController" customModule="Where_U_At" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SignInViewID" id="BYZ-38-t0r" customClass="SignInViewController" customModule="Where_U_At" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -98,12 +98,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="117" y="269"/>
+            <point key="canvasLocation" x="112" y="271"/>
         </scene>
         <!--Messages-->
         <scene sceneID="Mip-oQ-qu7">
             <objects>
-                <tableViewController id="ceh-h8-rAO" customClass="MessageTableViewController" customModule="Where_U_At" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="MessageTableViewID" id="ceh-h8-rAO" customClass="MessageTableViewController" customModule="Where_U_At" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="70" sectionHeaderHeight="28" sectionFooterHeight="28" id="yIO-uc-3Wn">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -461,6 +461,6 @@
         <image name="xeSQ6tv" width="3200" height="2592"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="9SN-Ss-881"/>
+        <segue reference="CX9-vh-RMO"/>
     </inferredMetricsTieBreakers>
 </document>

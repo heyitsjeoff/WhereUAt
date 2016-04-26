@@ -6,21 +6,44 @@
 //  Copyright © 2016 Jeoff Villanueva. All rights reserved.
 //
 
-import Foundation
+//import Foundation
+
+/**
+ Consists of all the HTTP requests methods which will be using Alamofire.
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - version:
+ 1.0
+ 
+ Alamofire is asychronus so callbacks are needed to respond appropriately when the JSON is returned.
+ Those are defined in CallBack.swift
+ */
+
 import Alamofire
 import Starscream
 import SwiftyJSON
 let variables = Variables.self //static variables delcaration
 
 /**
- Used to sign a user in
+ HTTP request to sign in
  
- @param username the username of the user
+ - Author:
+ Jeoff Villanueva
  
- @param password the password of the user
+ - returns:
+ void
  
- @param theView the SignInViewController so we can call functions within their
-*/
+ - parameters:
+    - username: the username used to attempt a sign in
+    - password: the password used to attempt a sign in
+    - theView: the SignInViewController used to sign in so methods can be called from callback
+ 
+ - version:
+ 1.0
+ 
+ */
 func signIn(username: String, password: String, theView: SignInViewController){
     let credentials = [
         "username": username,
@@ -100,10 +123,13 @@ func sendRequest(username: String, theView: FriendTableViewController){
  */
 func sendResponseToRequest(username: String, theResponse: String, theView: FriendTableViewController){
     let friendRequest = [
-        "usernameFrom" : myUsername,
-        "usernameTo": username,
-        "response": theResponse
+        "fromUser" : username,
+        "toUser": myUsername,
+        "acceptStatus": theResponse
     ]
+    
+    print("friendRequest parameters are: ")
+    print(friendRequest)
     
     Alamofire.request(.POST, variables.RESPONDFRIENDREQUEST, parameters: friendRequest).responseJSON
         { response in switch response.result {
@@ -152,14 +178,44 @@ func sendMessage(username: String, text: String, location: Bool, theView: UserMe
     let message = [
         "sender" : myUsername,
         "receiver" : username,
-        "text" : text,
-        "location" : location.description
+        "message" : text,
+        "mLocation" : location.description
     ]
     Alamofire.request(.POST, variables.SENDMESSAGE, parameters: message).responseJSON
         { response in switch response.result {
         case .Success(let jsonRes):
             let json = JSON(jsonRes)
             sendMessageCallBack(json, theView: theView, username: username, text: text, location: location)
+        case .Failure(let error):
+            print("Request failed with error: \(error)")
+            }
+    }
+}
+
+func getMessages(theView: UserMessageViewController){
+    let username = [
+        "username" : myUsername
+    ]
+    Alamofire.request(.GET, variables.GETMESSAGES, parameters: username).responseJSON
+        { response in switch response.result {
+        case .Success(let jsonRes):
+            let json = JSON(jsonRes)
+            getMessagesCallBack(json, theView: theView)
+        case .Failure(let error):
+            print("Request failed with error: \(error)")
+            }
+    }
+}
+
+func deleteMessagesFromDatabase(stringOfIDs: String){
+    let messages = [
+        "messageIDs" : stringOfIDs
+    ]
+    Alamofire.request(.POST, variables.DELETEMESSAGES, parameters: messages).responseJSON
+        { response in switch response.result {
+        case .Success(let jsonRes):
+            let json = JSON(jsonRes)
+            deleteMessagesFromDatabaseCallBack(json)
         case .Failure(let error):
             print("Request failed with error: \(error)")
             }

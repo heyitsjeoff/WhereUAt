@@ -10,6 +10,7 @@ import UIKit
 import CoreData
 import JSQMessagesViewController
 import CoreLocation
+import SwiftyJSON
 
 /**
  Implements JSQMessagesViewController to display messages between the user and
@@ -55,10 +56,34 @@ class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDele
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         
+        print("user message view controller will call getPendingMessages")
+        getPendingMessages()
+        
         //MARK: - Loads messages
         thread = Thread(username: username!)
         messages = thread!.getMessagesArray()
         
+    }
+    
+    func getPendingMessages(){
+        getMessages(self)
+    }
+    
+    func saveJSONMessages(list: JSON){
+        let messages = list.arrayValue
+        var stringOfIDs = ""
+        for message in messages{
+            
+            //senderUsername: String, text: String, messageID: Int, outgoing: Bool, location: Bool
+            let sender = message["sender"].description
+            let text = message["text"].description
+            let id = message["id"].int
+            let isLocation = message["isLocation"].boolValue
+            saveMessage(sender, text: text, messageID: id!, outgoing: false, location: isLocation)
+            stringOfIDs += message["id"].description + ","
+        }
+        let truncated = String(stringOfIDs.characters.dropLast())
+        deleteMessagesFromDatabase(truncated)
     }
     
     @IBAction func showMap(sender: UIBarButtonItem) {
@@ -119,6 +144,8 @@ class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDele
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
         print("Failed to find user's location: \(error.localizedDescription)")
     }
+    
+    
     
     func saveMessage(senderUsername: String, text: String, messageID: Int, outgoing: Bool, location: Bool){
         let entity =  NSEntityDescription.entityForName("Message",

@@ -22,14 +22,15 @@ var myUsername = ""
 class Variables{
     static let SERVER = "http://152.117.218.105:3000"
     static let WSSERVER = "ws://152.117.218.105:8081"
-    static let AUTHENTICATE = SERVER + "/api/authenticate/"
-    static let CREATE = SERVER + "/api/create_account/"
-    static let SENDFRIENDREQUEST = SERVER + "/api/send_friend_request/"
-    static let RESPONDFRIENDREQUEST = SERVER + "/api/respond_friend_request/"
-    static let GETPENDINGREQUESTS = SERVER + "/api/get_pending_requests/"
+    static let AUTHENTICATE = SERVER + "/api/authenticate"
+    static let CREATE = SERVER + "/api/create_account"
+    static let SENDFRIENDREQUEST = SERVER + "/api/send_friend_request"
+    static let RESPONDFRIENDREQUEST = SERVER + "/api/respond_friend_request"
+    static let GETPENDINGREQUESTS = SERVER + "/api/get_pending_requests"
     static let GETFRIENDSLIST = SERVER + "/api/get_friends_list"
-    static let SENDMESSAGE = SERVER + "/api/send_message/"
-    static let GETMESSAGE = SERVER + "/api/get_message/"
+    static let SENDMESSAGE = SERVER + "/api/send_message"
+    static let GETMESSAGES = SERVER + "/api/get_messages"
+    static let DELETEMESSAGES = SERVER + "/api/delete_messages"
     static let FAILED = 0
     static let SUCCESS = 1
     static let NOTCONNECTED = 2
@@ -51,6 +52,8 @@ class Variables{
  
  - version:
  1.0
+ 
+ Username is also stored as an NSManagedObject, but loading it once and setting it here is much simpler than doing a fetch very often
  */
 func setUsername(theUsername: String){
     myUsername = theUsername

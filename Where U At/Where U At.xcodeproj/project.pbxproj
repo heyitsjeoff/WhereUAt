@@ -13,6 +13,7 @@
 		2E59BFF91C87B96D003E4E71 /* Define.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E59BFF81C87B96D003E4E71 /* Define.swift */; };
 		2E5F879E1C8DCFCC00A4B068 /* CallBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F879D1C8DCFCC00A4B068 /* CallBack.swift */; };
 		2E8092CA1CC84EF600DC6572 /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E8092C91CC84EF600DC6572 /* Thread.swift */; };
+		2E928B891CCF202800CFA496 /* CoreDataFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E928B881CCF202800CFA496 /* CoreDataFunctions.swift */; };
 		2EB3030C1C83723900BF65AF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EB3030B1C83723900BF65AF /* AppDelegate.swift */; };
 		2EB3030E1C83723900BF65AF /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EB3030D1C83723900BF65AF /* SignInViewController.swift */; };
 		2EB303111C83723900BF65AF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2EB3030F1C83723900BF65AF /* Main.storyboard */; };
@@ -38,6 +39,7 @@
 		2E59BFF81C87B96D003E4E71 /* Define.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Define.swift; sourceTree = "<group>"; };
 		2E5F879D1C8DCFCC00A4B068 /* CallBack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallBack.swift; sourceTree = "<group>"; };
 		2E8092C91CC84EF600DC6572 /* Thread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Thread.swift; sourceTree = "<group>"; };
+		2E928B881CCF202800CFA496 /* CoreDataFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataFunctions.swift; sourceTree = "<group>"; };
 		2EB303081C83723800BF65AF /* Where U At.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Where U At.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EB3030B1C83723900BF65AF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2EB3030D1C83723900BF65AF /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 				2E5F879D1C8DCFCC00A4B068 /* CallBack.swift */,
 				2E0215211CCC534C0099928F /* CreditsViewController.swift */,
 				2E4A74D61C87512200E46C39 /* DataTransfer.swift */,
+				2E928B881CCF202800CFA496 /* CoreDataFunctions.swift */,
 				2EB303121C83723900BF65AF /* Where_U_At.xcdatamodeld */,
 				2E59BFF81C87B96D003E4E71 /* Define.swift */,
 				2EDA43A21C8B9F00002FEBA7 /* Friend.swift */,
@@ -276,6 +279,7 @@
 				2EDA43A11C8B9EB3002FEBA7 /* FriendTableViewController.swift in Sources */,
 				2E0215221CCC534C0099928F /* CreditsViewController.swift in Sources */,
 				2EDA439F1C8B9C5D002FEBA7 /* FriendTableViewCell.swift in Sources */,
+				2E928B891CCF202800CFA496 /* CoreDataFunctions.swift in Sources */,
 				2EDA43961C8B4583002FEBA7 /* MessageTableViewCell.swift in Sources */,
 				2EDA43981C8B8245002FEBA7 /* MessageTableViewController.swift in Sources */,
 				2E8092CA1CC84EF600DC6572 /* Thread.swift in Sources */,

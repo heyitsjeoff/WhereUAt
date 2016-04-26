@@ -44,14 +44,14 @@ class FriendTableViewController: UITableViewController {
         let yesAction = UIAlertAction(title: "Sure",
                                       style: .Default,
                                       handler: { (action:UIAlertAction) -> Void in
-                                        sendResponseToRequest(username, theResponse: "accept", theView: self)
+                                        sendResponseToRequest(username, theResponse: "true", theView: self)
                                         //self.tableView.reloadData()
         })
         
         let noAction = UIAlertAction(title: "Nope",
                                      style: .Default,
                                      handler: { (action:UIAlertAction) -> Void in
-                                        sendResponseToRequest(username, theResponse: "decline", theView: self)
+                                        sendResponseToRequest(username, theResponse: "false", theView: self)
                                         //self.tableView.reloadData()
         })
         
@@ -538,16 +538,16 @@ class FriendTableViewController: UITableViewController {
             
             let okAction = UIAlertAction(title: "Yay",
                                          style: .Default) { (action: UIAlertAction) -> Void in
-                                            if(theResponse == "accept"){
-                                                self.deletePending(username)
-                                                self.getFriends()
-                                                self.getPendingFriendRequests()
-                                            }
-                                            else if(theResponse == "decline"){
-                                                self.deletePending(username)
-                                                self.getFriends()
-                                                self.getPendingFriendRequests()
-                                            }
+//                                            if(theResponse == "true"){
+//                                                //self.deletePending(username)
+//                                                //self.getFriends()
+//                                                //self.getPendingFriendRequests()
+//                                            }
+//                                            else if(theResponse == "false"){
+//                                                self.deletePending(username)
+//                                                self.getFriends()
+//                                                self.getPendingFriendRequests()
+//                                            }
             }
             
             alert.addAction(okAction)

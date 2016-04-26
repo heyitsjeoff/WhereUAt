@@ -26,25 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Where U At/DataTransfer.swift"
-            timestampString = "482107584.192756"
+            timestampString = "483329262.05506"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "41"
-            endingLineNumber = "41">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Where U At/DataTransfer.swift"
-            timestampString = "482107584.192756"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "18"
-            endingLineNumber = "18">
+            startingLineNumber = "64"
+            endingLineNumber = "64">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -102,11 +88,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Where U At/SignInViewController.swift"
-            timestampString = "483030603.87011"
+            timestampString = "483335745.946343"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115"
+            startingLineNumber = "150"
+            endingLineNumber = "150"
             landmarkName = "alertLogin(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -118,28 +104,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Where U At/UserMessageViewController.swift"
-            timestampString = "483164420.630224"
+            timestampString = "483332781.061825"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "61"
-            endingLineNumber = "61"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
             landmarkName = "viewDidLoad()"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Where U At/FriendTableViewController.swift"
-            timestampString = "483242530.34714"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "544"
-            endingLineNumber = "544"
-            landmarkName = "alertRespondRequest(_:username:theResponse:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -1,6 +1,5 @@
 import UIKit
 import CoreData
-import Starscream
 
 /**
  The view controller for the SignInView
@@ -14,7 +13,7 @@ import Starscream
  The sign in view will allow the user to either create an account or sign in. Once either
  of those two actions are performed, the user will be signed in
  */
-class SignInViewController: UIViewController, WebSocketDelegate {
+class SignInViewController: UIViewController{
 
     @IBOutlet weak var usernameTF: UITextField! //text field for username
     @IBOutlet weak var passwordTF: UITextField! //text field for password
@@ -26,31 +25,49 @@ class SignInViewController: UIViewController, WebSocketDelegate {
     
     //Socket
     
-    let socket = WebSocket(url: NSURL(string: "ws://152.117.214.185:8081/")!)
-    
-    func websocketDidConnect(ws: WebSocket) {
-        print("websocket is connected")
-    }
-    
-    func websocketDidDisconnect(ws: WebSocket, error: NSError?) {
-        if let e = error {
-            print("websocket is disconnected: \(e.localizedDescription)")
-        } else {
-            print("websocket disconnected")
-        }
-    }
-    
-    func websocketDidReceiveMessage(ws: WebSocket, text: String) {
-        print("Received text: \(text)")
-    }
-    
-    func websocketDidReceiveData(ws: WebSocket, data: NSData) {
-        print("Received data: \(data.length)")
-    }
-    
+//    let socket = WebSocket(url: NSURL(string: "ws://152.117.214.185:8081/")!)
+//    
+//    func websocketDidConnect(ws: WebSocket) {
+//        print("websocket is connected")
+//    }
+//    
+//    func websocketDidDisconnect(ws: WebSocket, error: NSError?) {
+//        if let e = error {
+//            print("websocket is disconnected: \(e.localizedDescription)")
+//        } else {
+//            print("websocket disconnected")
+//        }
+//    }
+//    
+//    func websocketDidReceiveMessage(ws: WebSocket, text: String) {
+//        print("Received text: \(text)")
+//    }
+//    
+//    func websocketDidReceiveData(ws: WebSocket, data: NSData) {
+//        print("Received data: \(data.length)")
+//    }
+//    add imports and delegate for websocket if uncommenting
     //Socket
     
     ///Will either attempt to sign the user in or create an account, based on the current status
+    
+    /**
+     Called when the Sign In Button is selected
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - sender: the UIButton being pressed
+     
+     - version:
+     1.0
+     
+     This function can sign a user in or create an account. The view is reused and the text labels are changed based on the status.
+     */
     @IBAction func signInBTN(sender: UIButton) {
         if(signingIn){
             signIn(usernameTF.text!, password: passwordTF.text!, theView: self)
@@ -79,6 +96,24 @@ class SignInViewController: UIViewController, WebSocketDelegate {
     }
     
     /// Modifies the current window from signing in to creating an account
+    
+    /**
+     Called when the Create Account Button is selected. Changes the current view from a signing in view to a create an account view
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - sender: the UIButton being pressed
+     
+     - version:
+     1.0
+     
+     The view is reused and the text labels are changed based on the status. It will either modify the view to allow sign in or creation of an account
+     */
     @IBAction func createAccountBTN(sender: UIButton) {
         if(signingIn == true){
             signingIn = false
@@ -205,12 +240,8 @@ class SignInViewController: UIViewController, WebSocketDelegate {
             if(credentials.count != 0){
                 let login = credentials.first
                 let theCachedName = login!.valueForKey("username") as! String
-                print(theCachedName)
                 setUsername(theCachedName)
                 performSegueWithIdentifier("MessageThreads", sender: nil)
-            }
-            else{
-                print("not signed in")
             }
         } catch let error as NSError {
             print("Could not fetch \(error), \(error.userInfo)")
