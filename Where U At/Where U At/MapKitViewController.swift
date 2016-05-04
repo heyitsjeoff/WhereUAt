@@ -23,23 +23,48 @@ class MapKitViewController: UIViewController, MKMapViewDelegate, CLLocationManag
 
     @IBOutlet weak var mapKitView: MKMapView!
     
+    var userLatitude: String!
+    var userLongitude: String!
+    var username: String!
+    
     let locationManager = CLLocationManager()
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
         
+        print("loading view")
+        print("lat to display: " + userLatitude)
+        print("lon to display: " + userLongitude)
+        
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.locationManager.requestWhenInUseAuthorization()
-        self.locationManager.startUpdatingLocation()
+        //self.locationManager.startUpdatingLocation()
+        
+        setLocation()
         
         self.mapKitView.showsUserLocation = true
-        
     }
     
-    func setLocation(latitude: String, longitude: String){
-        let center = CLLocationCoordinate2D(latitude: Double(latitude)!, longitude: Double(longitude)!)
+    func setLocation(){
+        print("setLocation called")
+        print("setting center")
+        print("lat to use: " + userLatitude)
+        print("lon to use: " + userLongitude)
+        let center = CLLocationCoordinate2D(latitude: Double(userLatitude)!, longitude: Double(userLongitude)!)
+        
+        print("creating center with a lat of " + userLatitude + " and a lon of " + userLongitude)
+        
+        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
+        
+        self.mapKitView.setRegion(region, animated: true)
+        
+        let userPin = MKPointAnnotation()
+        userPin.coordinate = center
+        userPin.title = username
+        userPin.subtitle = "Where he/she at"
+        mapKitView.addAnnotation(userPin)
     }
     
     override func didReceiveMemoryWarning()
@@ -49,23 +74,23 @@ class MapKitViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     }
     
     // MARK: - Location Delegate Methods
-    
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
-    {
-        let location = locations.last
-        
-        //let lat = "47.14"
-        //let lon = "-122.44"
-        
-        //let center = CLLocationCoordinate2D(latitude: Double(lat)!, longitude: Double(lon)!)
-        
-        let center = CLLocationCoordinate2D(latitude: location!.coordinate.latitude, longitude: location!.coordinate.longitude)
-        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
-        
-        self.mapKitView.setRegion(region, animated: true)
-        
-        self.locationManager.stopUpdatingLocation()
-    }
+//    
+//    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
+//    {
+//        let location = locations.last
+//        
+//        //let lat = "47.14"
+//        //let lon = "-122.44"
+//        
+//        //let center = CLLocationCoordinate2D(latitude: Double(lat)!, longitude: Double(lon)!)
+//        
+//        let center = CLLocationCoordinate2D(latitude: location!.coordinate.latitude, longitude: location!.coordinate.longitude)
+//        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
+//        
+//        self.mapKitView.setRegion(region, animated: true)
+//        
+//        self.locationManager.stopUpdatingLocation()
+//    }
     
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError)
     {

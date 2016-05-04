@@ -49,7 +49,8 @@ class Thread{
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate /*gets the delegate*/
         managedContext = appDelegate.managedObjectContext /*sets the managed context*/
         loadMessages(username) /*loads messages into array for username*/
-        lastMessage = messages.last /*sets lastMessage*/
+        //lastMessage = messages.last /*sets lastMessage*/
+        setLastMessage()
     }
     
     /**
@@ -75,6 +76,20 @@ class Thread{
             let results =
                 try managedContext!.executeFetchRequest(fetchRequest)
             messages = results as! [NSManagedObject]
+        } catch let error as NSError {
+            print("Could not fetch \(error), \(error.userInfo)")
+        }
+    }
+    
+    func setLastMessage(){
+        let messageFetchRequest = NSFetchRequest(entityName: "Message")
+        let locationPredicate = NSPredicate(format: "location == NO")
+        messageFetchRequest.predicate = locationPredicate
+        do {
+            let results =
+                try managedContext!.executeFetchRequest(messageFetchRequest)
+            let messages = results as! [NSManagedObject]
+            lastMessage = messages.last
         } catch let error as NSError {
             print("Could not fetch \(error), \(error.userInfo)")
         }

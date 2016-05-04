@@ -1,5 +1,6 @@
 import UIKit
 import CoreData
+import Starscream
 
 /**
  The view controller for the SignInView
@@ -13,7 +14,7 @@ import CoreData
  The sign in view will allow the user to either create an account or sign in. Once either
  of those two actions are performed, the user will be signed in
  */
-class SignInViewController: UIViewController{
+class SignInViewController: UIViewController, WebSocketDelegate{
 
     @IBOutlet weak var usernameTF: UITextField! //text field for username
     @IBOutlet weak var passwordTF: UITextField! //text field for password
@@ -25,28 +26,28 @@ class SignInViewController: UIViewController{
     
     //Socket
     
-//    let socket = WebSocket(url: NSURL(string: "ws://152.117.214.185:8081/")!)
-//    
-//    func websocketDidConnect(ws: WebSocket) {
-//        print("websocket is connected")
-//    }
-//    
-//    func websocketDidDisconnect(ws: WebSocket, error: NSError?) {
-//        if let e = error {
-//            print("websocket is disconnected: \(e.localizedDescription)")
-//        } else {
-//            print("websocket disconnected")
-//        }
-//    }
-//    
-//    func websocketDidReceiveMessage(ws: WebSocket, text: String) {
-//        print("Received text: \(text)")
-//    }
-//    
-//    func websocketDidReceiveData(ws: WebSocket, data: NSData) {
-//        print("Received data: \(data.length)")
-//    }
-//    add imports and delegate for websocket if uncommenting
+    let socket = WebSocket(url: NSURL(string: "ws://152.117.218.105:3001")!)
+    
+    func websocketDidConnect(ws: WebSocket) {
+        print("websocket is connected")
+    }
+    
+    func websocketDidDisconnect(ws: WebSocket, error: NSError?) {
+        if let e = error {
+            print("websocket is disconnected: \(e.localizedDescription)")
+        } else {
+            print("websocket disconnected")
+        }
+    }
+    
+    func websocketDidReceiveMessage(ws: WebSocket, text: String) {
+        print("Received text: \(text)")
+    }
+    
+    func websocketDidReceiveData(ws: WebSocket, data: NSData) {
+        print("Received data: \(data.length)")
+    }
+    //add imports and delegate for websocket if uncommenting
     //Socket
     
     ///Will either attempt to sign the user in or create an account, based on the current status
@@ -193,6 +194,8 @@ class SignInViewController: UIViewController{
      */
     func alertCreateAnAcouunt(success: String){
         if(success == "true"){
+            setCredentials(usernameTF.text!, password: passwordTF.text!)
+            
             let alert = UIAlertController(title: "Where U At",
                 message: "Your account has been created!",
                 preferredStyle: .Alert)
@@ -289,8 +292,8 @@ class SignInViewController: UIViewController{
         passwordTF.alpha = 0.5
         password2TF.alpha = 0.5
         setUsername("")
-        //socket.delegate = self
-        //socket.connect()
+        socket.delegate = self
+        socket.connect()
     }
 
 }

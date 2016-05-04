@@ -16,7 +16,69 @@ class FriendTableViewController: UITableViewController {
     var friends = [NSManagedObject]()
     var pendingRequests = [NSManagedObject]()
     
-    //MARK: - Actions
+    let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+    var managedContext: NSManagedObjectContext?
+    
+    //MARK: - Views
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        managedContext = appDelegate.managedObjectContext
+        
+        getFriendsList(self)
+        getPendingRequests(self)
+    }
+    
+    /**
+     checks the local storage and updates the view with the friends list
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+     - animated: boolean for wheter or not to have animation
+     
+     - version:
+     1.0
+     */
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        loadFriendIntoControllerArray()
+        loadPendingRequestsIntoControllerArray()
+    }
+    
+    func loadFriendIntoControllerArray(){
+        //2
+        let fetchRequest = NSFetchRequest(entityName: "Friend")
+        
+        //3
+        do {
+            let results =
+                try managedContext!.executeFetchRequest(fetchRequest)
+            friends = results as! [NSManagedObject]
+        } catch let error as NSError {
+            print("Could not fetch \(error), \(error.userInfo)")
+        }
+    }
+    
+    func loadPendingRequestsIntoControllerArray(){
+        let fetchRequestPending = NSFetchRequest(entityName: "PendingFriend")
+        
+        do {
+            let results =
+                try managedContext!.executeFetchRequest(fetchRequestPending)
+            pendingRequests = results as! [NSManagedObject]
+        } catch let error as NSError {
+            print("Could not fetch \(error), \(error.userInfo)")
+        }
+    }
+    
+    // MARK: - Actions
     
     /**
      Presents an alert for a user to respond to a friend request. An accept or decline will be sent
@@ -117,194 +179,7 @@ class FriendTableViewController: UITableViewController {
             completion: nil)
     }
     
-    
-    func getPendingFriendRequests(){
-        getPendingRequests(self)
-    }
-    
-    func getFriends(){
-        getFriendsList(self)
-    }
-    
-    //MARK: - Views
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        loadSampleFriends()
-        getFriends()
-        getPendingFriendRequests()
-    }
-    
-    /**
-     checks the local storage and updates the view with the friends list
-     
-     - Author:
-     Jeoff Villanueva
-     
-     - returns:
-     void
-     
-     - parameters:
-        - animated: boolean for wheter or not to have animation
-     
-     - version:
-     1.0
-     */
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        //1
-        let appDelegate =
-        UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        let managedContext = appDelegate.managedObjectContext
-        
-        //2
-        let fetchRequest = NSFetchRequest(entityName: "Friend")
-        
-        //3
-        do {
-            let results =
-            try managedContext.executeFetchRequest(fetchRequest)
-            friends = results as! [NSManagedObject]
-        } catch let error as NSError {
-            print("Could not fetch \(error), \(error.userInfo)")
-        }
-        
-        let fetchRequestPending = NSFetchRequest(entityName: "PendingFriend")
-        
-        do {
-            let results =
-                try managedContext.executeFetchRequest(fetchRequestPending)
-            pendingRequests = results as! [NSManagedObject]
-        } catch let error as NSError {
-            print("Could not fetch \(error), \(error.userInfo)")
-        }
-    }
-    
-    func loadSampleFriends(){
-        //deletePending("Zipper")
-//        saveFriend("molly")
-//        saveFriend("moscar")
-//        savePendingFriend("zipper")
-//        savePendingFriend("anchovie")
-    }
-    
-    // MARK: - Core Data
-    
-    /**
-     Saves a friend to the local storage
-     
-     - Author:
-     Jeoff Villanueva
-     
-     - returns:
-     void
-     
-     - parameters:
-        - name: the name of the friend to be saved
-     
-     - version:
-     1.0
-     */
-    func saveFriend(name: String) {
-        //1
-        let appDelegate =
-        UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        let managedContext = appDelegate.managedObjectContext
-        
-        //2
-        let entity =  NSEntityDescription.entityForName("Friend",
-            inManagedObjectContext:managedContext)
-        
-        let friend = NSManagedObject(entity: entity!,
-            insertIntoManagedObjectContext: managedContext)
-        
-        //3
-        friend.setValue(name, forKey: "username")
-        
-        //4
-        do {
-            try managedContext.save()
-            //5
-            friends.append(friend)
-        } catch let error as NSError  {
-            print("Could not save \(error), \(error.userInfo)")
-        }
-    }
-    
-    // MARK: - Deletes
-    
-    /**
-     Deletes all friends from the local storage
-     
-     - Author:
-     Jeoff Villanueva
-     
-     - returns:
-     void
-     
-     - version:
-     1.0
-     
-     This is called during the update of the storage. The storage is purged of all friends to ensure there is
-     no duplicate during update
-     */
-    func deleteFriends(){
-        
-        //1
-        let appDelegate =
-            UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        let managedContext = appDelegate.managedObjectContext
-        
-        let fetchRequest = NSFetchRequest(entityName: "Friend")
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        
-        do {
-            try managedContext.executeRequest(deleteRequest)
-            try managedContext.save()
-        } catch let error as NSError {
-            print("Could not save \(error), \(error.userInfo)")
-        }
-    }
-    
-    /**
-     Deletes all pending requests from the local storage
-     
-     - Author:
-     Jeoff Villanueva
-     
-     - returns:
-     void
-     
-     - version:
-     1.0
-     
-     This is called during the update of the storage. The storage is purged of all pending requests to ensure there is
-     no duplicate during update
-     */
-    func deletePendingRequests(){
-        
-        //1
-        let appDelegate =
-            UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        let managedContext = appDelegate.managedObjectContext
-        
-        let fetchRequest = NSFetchRequest(entityName: "PendingFriend")
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        
-        do {
-            try managedContext.executeRequest(deleteRequest)
-            try managedContext.save()
-        } catch let error as NSError {
-            print("Could not save \(error), \(error.userInfo)")
-        }
-    }
-    
-    // MARK: - Update lists
+    // MARK: - Updating
     
     /**
      Updates the local storage with the names of all friends for the signed in user
@@ -321,14 +196,9 @@ class FriendTableViewController: UITableViewController {
      - version:
      1.0
      */
-    func updateFriendsList(listOfNames: [String]){
-        print("updating friends list")
-        deleteFriends()
-        var tempName: String!
-        for friend in listOfNames{
-            tempName = friend
-            saveFriend(tempName)
-        }
+    func updateFriendsListArray(listOfNames: [String]){
+        updateFriendsList(listOfNames)
+        loadFriendIntoControllerArray()
     }
     
     /**
@@ -346,121 +216,9 @@ class FriendTableViewController: UITableViewController {
      - version:
      1.0
      */
-    func updatePendingRequests(listOfNames: [String]){
-        deletePendingRequests()
-        var tempName: String!
-        for friend in listOfNames{
-            tempName = friend
-            savePendingFriend(tempName)
-        }
-    }
-    
-    /**
-     Saves a pending request to the local storage
-     
-     - Author:
-     Jeoff Villanueva
-     
-     - returns:
-     void
-     
-     - parameters:
-        - name: the name of the pending request to be saved
-     
-     - version:
-     1.0
-     */
-    func savePendingFriend(name: String) {
-        //1
-        let appDelegate =
-        UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        let managedContext = appDelegate.managedObjectContext
-        
-        //2
-        let entity =  NSEntityDescription.entityForName("PendingFriend",
-            inManagedObjectContext:managedContext)
-        
-        let friend = NSManagedObject(entity: entity!,
-            insertIntoManagedObjectContext: managedContext)
-        
-        //3
-        friend.setValue(name, forKey: "username")
-        
-        //4
-        do {
-            try managedContext.save()
-            //5
-            pendingRequests.append(friend)
-        } catch let error as NSError  {
-            print("Could not save \(error), \(error.userInfo)")
-        }
-    }
-    
-    func deletePending(name: String){
-        //1
-        let appDelegate =
-            UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        let managedContext = appDelegate.managedObjectContext
-        
-        let fetchRequest = NSFetchRequest(entityName: "PendingFriend")
-        
-        fetchRequest.predicate = NSPredicate(format: "username == %@", name)
-        
-        do {
-            let results =
-                try managedContext.executeFetchRequest(fetchRequest)
-            let friendFound = results as! [NSManagedObject]
-            let friend = friendFound[0]
-            print(friend)
-            //let indexOfFriend = friends.indexOf(friend)
-            //print(indexOfFriend)
-            managedContext.deleteObject(friend)
-            //friends.removeAtIndex(indexOfFriend!)
-        } catch let error as NSError {
-            print("Could not fetch \(error), \(error.userInfo)")
-        }
-        
-        //4
-        do {
-            try managedContext.save()
-            //5
-        } catch let error as NSError  {
-            print("Could not save \(error), \(error.userInfo)")
-        }
-    }
-    
-    // MARK: - Table view data source
-    
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cellIdentifier = "FriendTableViewCell"
-        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier,
-            forIndexPath: indexPath) as! FriendTableViewCell
-        
-        if(indexPath.section == 0){
-            let friend = friends[indexPath.row]
-        
-            cell.friendUsername.text = friend.valueForKey("username") as? String
-        }
-        else{
-            let friend = pendingRequests[indexPath.row]
-            
-            cell.friendUsername.text = friend.valueForKey("username") as? String
-        }
-
-        return cell
-    }
-    
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if(indexPath.section == 0){
-            
-        }
-        else{
-            let friend = pendingRequests[indexPath.row]
-            let username = friend.valueForKey("username") as! String
-            respondToRequest(username)
-        }
+    func updatePendingRequestsArray(listOfNames: [String]){
+        updatePendingRequests(listOfNames)
+        loadPendingRequestsIntoControllerArray()
     }
     
     // MARK: - Alert Functions
@@ -530,7 +288,7 @@ class FriendTableViewController: UITableViewController {
      - version:
      1.0
      */
-    func alertRespondRequest(success: String, username: String, theResponse: String){
+    func alertRespondRequest(success: String){
         if(success == "true"){
             let alert = UIAlertController(title: "Where U At",
                                           message: "Your friend request response has been sent!",
@@ -538,16 +296,6 @@ class FriendTableViewController: UITableViewController {
             
             let okAction = UIAlertAction(title: "Yay",
                                          style: .Default) { (action: UIAlertAction) -> Void in
-//                                            if(theResponse == "true"){
-//                                                //self.deletePending(username)
-//                                                //self.getFriends()
-//                                                //self.getPendingFriendRequests()
-//                                            }
-//                                            else if(theResponse == "false"){
-//                                                self.deletePending(username)
-//                                                self.getFriends()
-//                                                self.getPendingFriendRequests()
-//                                            }
             }
             
             alert.addAction(okAction)
@@ -570,6 +318,38 @@ class FriendTableViewController: UITableViewController {
             presentViewController(alert,
                                   animated: true,
                                   completion: nil)
+        }
+    }
+    
+    // MARK: - Table view data source
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cellIdentifier = "FriendTableViewCell"
+        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier,
+                                                               forIndexPath: indexPath) as! FriendTableViewCell
+        
+        if(indexPath.section == 0){
+            let friend = friends[indexPath.row]
+            
+            cell.friendUsername.text = friend.valueForKey("username") as? String
+        }
+        else{
+            let friend = pendingRequests[indexPath.row]
+            
+            cell.friendUsername.text = friend.valueForKey("username") as? String
+        }
+        
+        return cell
+    }
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        if(indexPath.section == 0){
+            
+        }
+        else{
+            let friend = pendingRequests[indexPath.row]
+            let username = friend.valueForKey("username") as! String
+            respondToRequest(username)
         }
     }
     

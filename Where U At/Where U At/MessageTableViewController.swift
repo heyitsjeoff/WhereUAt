@@ -50,6 +50,8 @@ class MessageTableViewController: UITableViewController {
     }
     
     @IBAction func menuButtonPressed(sender: AnyObject) {
+        
+        
         // 1
         let actionSheet = UIAlertController(title: nil, message: "Menu", preferredStyle: .ActionSheet)
         
@@ -226,6 +228,7 @@ class MessageTableViewController: UITableViewController {
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        downloadAll()
         if(segue.identifier == "ShowMessage"){
             if let userMessageViewController = segue.destinationViewController as? UserMessageViewController{
                 if let selectedMessageCell = sender as? MessageTableViewCell{

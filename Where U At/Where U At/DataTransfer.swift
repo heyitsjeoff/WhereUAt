@@ -221,3 +221,52 @@ func deleteMessagesFromDatabase(stringOfIDs: String){
             }
     }
 }
+
+// MARK: Getters without views
+
+func getPendingRequests(){
+    let username = [
+        "username" : myUsername
+    ]
+    
+    Alamofire.request(.GET, variables.GETPENDINGREQUESTS, parameters: username).responseJSON
+        { response in switch response.result {
+        case .Success(let jsonRes):
+            let json = JSON(jsonRes)
+            getPendingFriendRequestsCallBack(json)
+        case .Failure(let error):
+            print("Request failed with error: \(error)")
+            }
+    }
+}
+
+func getFriendsList(){
+    let username = [
+        "username": myUsername
+    ]
+    
+    Alamofire.request(.GET, variables.GETFRIENDSLIST, parameters: username).responseJSON
+        { response in switch response.result {
+        case .Success(let jsonRes):
+            let json = JSON(jsonRes)
+            getFriendsListCallBack(json)
+        case .Failure(let error):
+            print("Request failed with error: \(error)")
+            }
+    }
+}
+
+func getMessages(){
+    let username = [
+        "username" : myUsername
+    ]
+    Alamofire.request(.GET, variables.GETMESSAGES, parameters: username).responseJSON
+        { response in switch response.result {
+        case .Success(let jsonRes):
+            let json = JSON(jsonRes)
+            getMessagesCallBack(json)
+        case .Failure(let error):
+            print("Request failed with error: \(error)")
+            }
+    }
+}
