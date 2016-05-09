@@ -18,14 +18,18 @@ class MessageTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        
         managedContext = appDelegate.managedObjectContext
-        loadMessages()
+        loadThreads()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        
+        downloadAll()
+        loadThreads()
+    }
+    
+    func loadThreads(){
+        print("starting to load threads")
         let messageFetchRequest = NSFetchRequest(entityName: "Message")
         threads.removeAll()
         do {
@@ -33,6 +37,7 @@ class MessageTableViewController: UITableViewController {
                 try managedContext!.executeFetchRequest(messageFetchRequest)
             let messages = results as! [NSManagedObject]
             var listOfSenders = [String]()
+            print("about to start for loop")
             for message in messages{
                 let name = message.valueForKey("senderUsername") as? String
                 if(!listOfSenders.contains(name!)){
@@ -40,13 +45,16 @@ class MessageTableViewController: UITableViewController {
                     let thread = Thread(username: name!)
                     threads.append(thread)
                 }
-//                let name = friend.valueForKey("username") as? String
-//                let thread = Thread(username: name!)
-//                threads.append(thread)
+                //                let name = friend.valueForKey("username") as? String
+                //                let thread = Thread(username: name!)
+                //                threads.append(thread)
             }
+            print("done with for loop")
         } catch let error as NSError {
             print("Could not fetch \(error), \(error.userInfo)")
         }
+        self.tableView.reloadData()
+        print("done loading threads")
     }
     
     @IBAction func menuButtonPressed(sender: AnyObject) {
@@ -94,14 +102,6 @@ class MessageTableViewController: UITableViewController {
 
     }
     
-    
-    func loadMessages(){
-//        saveMessage("molly", text: "hey, hows it going?", messageID: 3, outgoing: false, location: false)
-//        saveMessage("zipper", text: "food!", messageID: 4, outgoing: false, location: false)
-//        saveMessage("molly", text: "jk i dont care. wheres oscar?", messageID: 5, outgoing: false, location: false)
-//        saveMessage("molly", text: "oscar is home", messageID: 6, outgoing: true, location: false)
-    }
-    
     func saveMessage(senderUsername: String, text: String, messageID: Int, outgoing: Bool, location: Bool){
         let entity =  NSEntityDescription.entityForName("Message",
                                                         inManagedObjectContext:managedContext!)
@@ -144,6 +144,9 @@ class MessageTableViewController: UITableViewController {
             print("Could not save \(error), \(error.userInfo)")
         }
         setUsername("")
+        deleteAllFriends()
+        deleteAllMessages()
+        deleteAllPendingRequests()
     }
 
     // MARK: - Table view data source
@@ -163,11 +166,15 @@ class MessageTableViewController: UITableViewController {
             forIndexPath: indexPath) as! MessageTableViewCell
         
         let thread = threads[indexPath.row]
-        let message = thread.lastMessage
-        cell.nameLabel.text = message!.valueForKey("senderUsername") as? String
+        print("inside tableView loading for index" + String(indexPath.row))
+        //let message = thread.lastMessage
+        print("thread last message for " + thread.username + " is " + thread.getLastMessage())
+//        cell.nameLabel.text = message!.valueForKey("senderUsername") as? String
+//        print("cell label is " + cell.nameLabel.text!)
+        cell.nameLabel.text = thread.username
         //image cell.userImageView.image = message.photo
-        cell.messageLabel.text = message!.valueForKey("text") as? String
-
+        //cell.messageLabel.text = message!.valueForKey("text") as? String
+        cell.messageLabel.text = thread.getLastMessage()
         return cell
     }
     
@@ -200,28 +207,15 @@ class MessageTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
             // Delete the row from the data source
+            let thread = threads[indexPath.row]
+            print(thread.username)
+            deleteAllMessagesFrom(thread.username)
             threads.removeAtIndex(indexPath.row)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
         } else if editingStyle == .Insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
     }
-    
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
 
     
     // MARK: - Navigation

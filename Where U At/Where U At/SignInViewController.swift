@@ -138,11 +138,11 @@ class SignInViewController: UIViewController, WebSocketDelegate{
     */
     func alertLogin(success: String){
         if(success == "true"){
+            setCredentials(usernameTF.text!, password: passwordTF.text!)
+            downloadAll()
             let alert = UIAlertController(title: "Where U At",
                 message: "Welcome to the motherland!",
                 preferredStyle: .Alert)
-            
-            setCredentials(usernameTF.text!, password: passwordTF.text!)
             
             let okAction = UIAlertAction(title: "Wavy",
                 style: UIAlertActionStyle.Default) {
@@ -229,6 +229,18 @@ class SignInViewController: UIViewController, WebSocketDelegate{
         }
     }
     
+    /**
+     Checks if the user is already signed in. If the user is signed in, the view will transition to the MessageTableView
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     */
     func checkIfSignedIn(){
         let appDelegate =
             UIApplication.sharedApplication().delegate as! AppDelegate
@@ -251,6 +263,20 @@ class SignInViewController: UIViewController, WebSocketDelegate{
         }
     }
     
+    /**
+     Sets the local credentials for the user
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     
+     This function will be called by alertLogin or alertCreateAccount
+     */
     func setCredentials(username: String, password: String) {
         //1
         let appDelegate =
@@ -291,7 +317,6 @@ class SignInViewController: UIViewController, WebSocketDelegate{
         usernameTF.alpha = 0.5
         passwordTF.alpha = 0.5
         password2TF.alpha = 0.5
-        setUsername("")
         socket.delegate = self
         socket.connect()
     }

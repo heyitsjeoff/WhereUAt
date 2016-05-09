@@ -28,7 +28,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let login = credentials.first
                 let theCachedName = login!.valueForKey("username") as! String
                 setUsername(theCachedName)
-                print("the cached name is " + theCachedName)
             }
         } catch let error as NSError {
             print("Could not fetch \(error), \(error.userInfo)")

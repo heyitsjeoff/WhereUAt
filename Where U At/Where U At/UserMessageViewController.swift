@@ -25,27 +25,26 @@ import SwiftyJSON
  1.0
  */
 class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDelegate {
-    var username: String!
-    var managedContext: NSManagedObjectContext?
-    var thread: Thread?
-    var myLocation: CLLocation?
-    var myLongitude: String?
-    var myLatitude: String?
-    var userLongitude: String!
-    var userLatitude: String!
-    var messages = [NSManagedObject]()
-    let locationManager = CLLocationManager()
-    var broadcastInterval: Double!
-    var timer = NSTimer()
-    var isBroadcasting = false
+    var username: String! //username of the thread participant
+    var managedContext: NSManagedObjectContext? //managed object context for core data
+    var thread: Thread? //the thread consisting of messages
+    var myLocation: CLLocation? //location of the signed in user
+    var myLongitude: String? //longitude of the signed in user
+    var myLatitude: String? //latitude of the signed in user
+    var userLongitude: String! //longitude of the thread participant
+    var userLatitude: String! //latitude of the thread participant
+    var messages = [NSManagedObject]() //array of NSManagedObjects with the message entity
+    let locationManager = CLLocationManager() //CLLocationManager to use cllocation
+    var broadcastInterval: Double! //double for representing broadcast interval in seconds
+    var timer = NSTimer() //NSTimer for broadcasting interval
+    var getTimer = NSTimer() //NSTimer for doing gets on the server
+    var isBroadcasting = false //boolean representation for broadcasting state
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         managedContext = appDelegate.managedObjectContext
-        
-        self.locationManager.requestWhenInUseAuthorization()
         
         //MARK: - JSQ initialization
         if let username = username{
@@ -67,18 +66,33 @@ class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDele
         thread = Thread(username: username!)
         messages = thread!.getMessagesArray()
         findLastLocationOfUser()
+        startGetting()
     }
+    
     
     func getPendingMessages(){
         getMessages(self)
     }
     
+    /**
+     Saves a list of messages
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - list: JSON that contains an array of messages
+     
+     - version:
+     1.0
+     */
     func saveJSONMessages(list: JSON){
         let messages = list.arrayValue
         var stringOfIDs = ""
         for message in messages{
-            
-            //senderUsername: String, text: String, messageID: Int, outgoing: Bool, location: Bool
             let sender = message["sender"].description
             let text = message["text"].description
             let id = message["id"].int
@@ -90,10 +104,26 @@ class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDele
         if(stringOfIDs != ""){
             deleteMessagesFromDatabase(truncated)
         }
+        //thread!.reload()
     }
     
+    /**
+     Performs a segue to a MapKitView
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - sender: the UIBarButtonItem that was pressed
+     
+     - version:
+     1.0
+     */
     @IBAction func showMap(sender: UIBarButtonItem) {
-        print("rightbarbutton pressed")
+        self.locationManager.requestWhenInUseAuthorization()
         performSegueWithIdentifier("showMap", sender: sender)
     }
 
@@ -136,7 +166,22 @@ class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDele
         self.presentViewController(actionSheet, animated: true, completion: nil)
     }
     
+    /**
+     Requests the user for the location interval for sending location
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     
+     This function is called from locationAction within didPressAccessoryButton
+     */
     func requestLocationInterval(){
+        self.locationManager.requestWhenInUseAuthorization()
         let alert = UIAlertController(title: "Send Location",
                                       message: "Send your location every _ seconds",
                                       preferredStyle: .Alert)
@@ -165,11 +210,40 @@ class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDele
                               completion: nil)
     }
     
+    /**
+     Sets the broadcast interval for sending location
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - frequency: the frequency of broadcasting in seconds as a string
+     
+     - version:
+     1.0
+     */
     func setBroadcastInterval(frequency: String){
         broadcastInterval = Double(frequency)
         startBroadcasting()
     }
     
+    /**
+     Starts the timer for the broadcast interval. Fire action on interval is sendLocation. Sets isBroadcasting to true
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     
+     Is called by setBroadcastInterval(frequency: String)
+     */
     func startBroadcasting(){
         print("broadcast started")
         isBroadcasting = true
@@ -177,6 +251,24 @@ class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDele
         timer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: #selector(self.sendLocation), userInfo: nil, repeats: true)
     }
     
+    func startGetting(){
+        getTimer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: #selector(self.getPendingMessages), userInfo: nil, repeats: true)
+    }
+    
+    /**
+     Stops the timer for the broadcast interval. Sets isBroadcasting to false and broadcastInterval to nil
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     
+     Is called by locationAction within didPressAccessoryButton
+     */
     func stopBroadcasting(){
         print("broadcast stopped")
         broadcastInterval = nil;
@@ -232,6 +324,9 @@ class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDele
         } catch let error as NSError  {
             print("Could not save \(error), \(error.userInfo)")
         }
+        thread?.loadMessages(username)
+        messages = thread!.getMessagesArray()
+        self.finishSendingMessageAnimated(true)
     }
     
     /**
@@ -244,7 +339,7 @@ class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDele
      void
      
      - parameters:
-     - message: the message to be converted
+        - message: the message to be converted
      
      - version:
      1.0
@@ -269,11 +364,22 @@ class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDele
     
     func messageSent(senderUsername: String, text: String, messageID: Int, location: Bool){
         saveMessage(senderUsername, text: text, messageID: messageID, outgoing: true, location: location)
-        //self.finishSendingMessageAnimated(true)
+        
     }
     
+    /**
+     Finds the last location saved and sets userLatitude and userLongitude
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     */
     func findLastLocationOfUser(){
-        print("finding last location")
         let messageFetchRequest = NSFetchRequest(entityName: "Message")
         let locationPredicate = NSPredicate(format: "location == YES")
         let outgoingPredicate = NSPredicate(format: "outgoing == NO")
@@ -282,13 +388,13 @@ class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDele
             let results =
                 try managedContext!.executeFetchRequest(messageFetchRequest)
             let locations = results as! [NSManagedObject]
-            print(locations)
-            let lastLocation = locations.last
-            let coordinates = lastLocation!.valueForKey("text") as! String
-            let locationArray = coordinates.characters.split{$0 == ","}.map(String.init)
-            print("coor: "+coordinates)
-            userLatitude = locationArray[0]
-            userLongitude = locationArray[1]
+            if(locations.count != 0){
+                let lastLocation = locations.last
+                let coordinates = lastLocation!.valueForKey("text") as! String
+                let locationArray = coordinates.characters.split{$0 == ","}.map(String.init)
+                userLatitude = locationArray[0]
+                userLongitude = locationArray[1]
+            }
         } catch let error as NSError {
             print("Could not fetch \(error), \(error.userInfo)")
         }
@@ -296,12 +402,30 @@ class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDele
     
     //MARK: - Buttons
     
+    /**
+     Function called when the Send button is pressed
+     
+     - Author:
+     JSQ with modifications by Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - button: the UIButton pressed
+        - withMessageText text: the message that was in the text field
+        - senderId: the id of the sender
+        - senderDisplayName: the name of the sender
+        - date: the data the message was sent
+     
+     - version:
+     1.0
+     */
     override func didPressSendButton(button: UIButton!, withMessageText text: String!, senderId: String!, senderDisplayName: String!, date: NSDate!)
     {
-        let message = JSQMessage(senderId: self.senderId, displayName: self.senderDisplayName, text: text);
+        //let message = JSQMessage(senderId: self.senderId, displayName: self.senderDisplayName, text: text);
         sendMessage(username, text: text, location: false, theView: self)
-        
-        self.finishSendingMessageAnimated(true);
+        //self.finishSendingMessageAnimated(true);
     }
     
     
@@ -344,14 +468,10 @@ class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDele
         return cell;
     }
     
-    
     override func collectionView(collectionView: JSQMessagesCollectionView!, avatarImageDataForItemAtIndexPath indexPath: NSIndexPath!) -> JSQMessageAvatarImageDataSource!
     {
         return nil;
     }
-    
-    
-    
     
     // MARK: - Navigation
 
@@ -368,6 +488,8 @@ class UserMessageViewController: JSQMessagesViewController,CLLocationManagerDele
                 theView.userLongitude = userLongitude
                 theView.userLatitude = userLatitude
                 theView.username = username
+                theView.myLatitude = myLatitude
+                theView.myLongitude = myLongitude
             }
         }
 

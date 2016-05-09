@@ -25,6 +25,8 @@ class MapKitViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     var userLatitude: String!
     var userLongitude: String!
+    var myLatitude: String!
+    var myLongitude: String!
     var username: String!
     
     let locationManager = CLLocationManager()
@@ -32,10 +34,6 @@ class MapKitViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
-        print("loading view")
-        print("lat to display: " + userLatitude)
-        print("lon to display: " + userLongitude)
         
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -50,21 +48,32 @@ class MapKitViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     func setLocation(){
         print("setLocation called")
         print("setting center")
-        print("lat to use: " + userLatitude)
-        print("lon to use: " + userLongitude)
-        let center = CLLocationCoordinate2D(latitude: Double(userLatitude)!, longitude: Double(userLongitude)!)
         
-        print("creating center with a lat of " + userLatitude + " and a lon of " + userLongitude)
+        if(userLatitude != nil && userLongitude != nil){
         
-        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
+            print("lat to use: " + userLatitude)
+            print("lon to use: " + userLongitude)
+            let center = CLLocationCoordinate2D(latitude: Double(userLatitude)!, longitude: Double(userLongitude)!)
         
-        self.mapKitView.setRegion(region, animated: true)
+            let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
         
-        let userPin = MKPointAnnotation()
-        userPin.coordinate = center
-        userPin.title = username
-        userPin.subtitle = "Where he/she at"
-        mapKitView.addAnnotation(userPin)
+            self.mapKitView.setRegion(region, animated: true)
+        
+            let userPin = MKPointAnnotation()
+            userPin.coordinate = center
+            userPin.title = username
+            userPin.subtitle = "Where he/she at"
+            mapKitView.addAnnotation(userPin)
+        }
+        else{
+            if(myLatitude != nil && myLongitude != nil){
+                let center = CLLocationCoordinate2D(latitude: Double(myLatitude)!, longitude: Double(myLongitude)!)
+            
+                let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
+            
+                self.mapKitView.setRegion(region, animated: true)
+            }
+        }
     }
     
     override func didReceiveMemoryWarning()

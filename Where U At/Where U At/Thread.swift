@@ -21,7 +21,7 @@ import CoreData
  */
 class Thread{
     
-    var username: String? /*username of the thread participant*/
+    var username: String! /*username of the thread participant*/
     var managedContext: NSManagedObjectContext? /*managed context so data can be added*/
     var messages = [NSManagedObject]() /*array of NSManagedObjects for messages*/
     var lastMessage: NSManagedObject? /*last message in array*/
@@ -69,12 +69,17 @@ class Thread{
         - username the username of the thread participant
     */
     func loadMessages(username: String){
-        let fetchRequest = NSFetchRequest(entityName: "Message")
-        fetchRequest.predicate = NSPredicate(format: "senderUsername == %@", username)
+        let messageFetchRequest = NSFetchRequest(entityName: "Message")
+        let locationPredicate = NSPredicate(format: "location == NO")
+        let senderPredicate = NSPredicate(format: "senderUsername == %@", username)
+        messageFetchRequest.predicate = NSCompoundPredicate(type: .AndPredicateType, subpredicates: [locationPredicate, senderPredicate])
+
+//        let fetchRequest = NSFetchRequest(entityName: "Message")
+//        fetchRequest.predicate = NSPredicate(format: "senderUsername == %@", username)
 
         do {
             let results =
-                try managedContext!.executeFetchRequest(fetchRequest)
+                try managedContext!.executeFetchRequest(messageFetchRequest)
             messages = results as! [NSManagedObject]
         } catch let error as NSError {
             print("Could not fetch \(error), \(error.userInfo)")
@@ -93,6 +98,10 @@ class Thread{
         } catch let error as NSError {
             print("Could not fetch \(error), \(error.userInfo)")
         }
+    }
+    
+    func getLastMessage() -> String{
+        return lastMessage?.valueForKey("text") as! String
     }
     
     /**

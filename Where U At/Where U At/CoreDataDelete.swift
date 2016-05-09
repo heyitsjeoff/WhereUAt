@@ -45,6 +45,77 @@ func deleteAllFriends(){
 }
 
 /**
+ Deletes all messages from the local storage
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - returns:
+ void
+ 
+ - version:
+ 1.0
+ 
+ This is called during the update of the storage. The storage is purged of all friends to ensure there is
+ no duplicate during update
+ */
+func deleteAllMessages(){
+    
+    //1
+    let appDelegate =
+        UIApplication.sharedApplication().delegate as! AppDelegate
+    
+    let managedContext = appDelegate.managedObjectContext
+    
+    let fetchRequest = NSFetchRequest(entityName: "Message")
+    let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+    
+    do {
+        try managedContext.executeRequest(deleteRequest)
+        try managedContext.save()
+    } catch let error as NSError {
+        print("Could not save \(error), \(error.userInfo)")
+    }
+}
+
+/**
+ Deletes all messages from the local storage
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - returns:
+ void
+ 
+ - version:
+ 1.0
+ 
+ This is called during the update of the storage. The storage is purged of all friends to ensure there is
+ no duplicate during update
+ */
+func deleteAllMessagesFrom(username: String){
+    
+    //1
+    let appDelegate =
+        UIApplication.sharedApplication().delegate as! AppDelegate
+    
+    let managedContext = appDelegate.managedObjectContext
+    
+    let messageFetchRequest = NSFetchRequest(entityName: "Message")
+    let senderPredicate = NSPredicate(format: "senderUsername == %@", username)
+    messageFetchRequest.predicate = senderPredicate
+    
+    let deleteRequest = NSBatchDeleteRequest(fetchRequest: messageFetchRequest)
+    
+    do {
+        try managedContext.executeRequest(deleteRequest)
+        try managedContext.save()
+    } catch let error as NSError {
+        print("Could not fetch \(error), \(error.userInfo)")
+    }
+}
+
+/**
  Deletes all pending requests from the local storage
  
  - Author:

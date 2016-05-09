@@ -62,13 +62,22 @@ func signIn(username: String, password: String, theView: SignInViewController){
 }
 
 /**
- Used to create an account for a user
+ HTTP request to create an account
  
- @param username the username of the user
+ - Author:
+ Jeoff Villanueva
  
- @param password the password of the user
+ - returns:
+ void
  
- @param theView the SignInViewController so we can call functions within their
+ - parameters:
+    - username: the username used to create an account
+    - password: the password used to create an account
+    - theView: the SignInViewController used to create an account so methods can be called from callback
+ 
+ - version:
+ 1.0
+ 
  */
 func createAccount(username: String, password: String, theView: SignInViewController){
     let credentials = [
@@ -83,17 +92,27 @@ func createAccount(username: String, password: String, theView: SignInViewContro
             createAccountCallBack(json, theView: theView)
         case .Failure(let error):
             print("Request failed with error: \(error)")
-            variables.FAILED
+            
             }
     }
 }
 
 /**
- Used to
+ HTTP request to send a friend request
  
- @param username the username of the user
+ - Author:
+ Jeoff Villanueva
  
- @param theView the SignInViewController so we can call functions within their
+ - returns:
+ void
+ 
+ - parameters:
+    - username: the username of the person receiving the request
+    - theView: the FriendTableViewController used to send the request
+ 
+ - version:
+ 1.0
+ 
  */
 func sendRequest(username: String, theView: FriendTableViewController){
     let friendRequest = [
@@ -113,13 +132,22 @@ func sendRequest(username: String, theView: FriendTableViewController){
 }
 
 /**
- Used to
+ HTTP request to respond to a friend request
  
- @param username the username of the user
+ - Author:
+ Jeoff Villanueva
  
- @param username the username of the friend being responded to
+ - returns:
+ void
  
- @param theView the SignInViewController so we can call functions within their
+ - parameters:
+    - username: the username of the person who sent the request
+    - theResponse: the response to the request
+    - theView: the FriendTableViewController used to send the response
+ 
+ - version:
+ 1.0
+ 
  */
 func sendResponseToRequest(username: String, theResponse: String, theView: FriendTableViewController){
     let friendRequest = [
@@ -142,6 +170,22 @@ func sendResponseToRequest(username: String, theResponse: String, theView: Frien
     }
 }
 
+/**
+ HTTP request to getPendingRequests
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - returns:
+ void
+ 
+ - parameters:
+    - theView: the FriendTableViewController used to send the response
+ 
+ - version:
+ 1.0
+ 
+ */
 func getPendingRequests(theView: FriendTableViewController){
     let username = [
         "username" : myUsername
@@ -158,6 +202,22 @@ func getPendingRequests(theView: FriendTableViewController){
     }
 }
 
+/**
+ HTTP request to get the users friends list
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - returns:
+ void
+ 
+ - parameters:
+    - theView: the FriendTableViewController used to get the friends list
+ 
+ - version:
+ 1.0
+ 
+ */
 func getFriendsList(theView: FriendTableViewController){
     let username = [
         "username": myUsername
@@ -174,6 +234,25 @@ func getFriendsList(theView: FriendTableViewController){
     }
 }
 
+/**
+ HTTP request to send a message
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - returns:
+ void
+ 
+ - parameters:
+    - username: the username of the receiver
+    - text: the text of the message
+    - location: boolean value for whether or not the message is a location
+    - theView: the FriendTableViewController used to send the response
+ 
+ - version:
+ 1.0
+ 
+ */
 func sendMessage(username: String, text: String, location: Bool, theView: UserMessageViewController){
     let message = [
         "sender" : myUsername,
@@ -192,6 +271,22 @@ func sendMessage(username: String, text: String, location: Bool, theView: UserMe
     }
 }
 
+/**
+ HTTP request to get pending messages
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - returns:
+ void
+ 
+ - parameters:
+    - theView: the UserMessageViewController to get the messages
+ 
+ - version:
+ 1.0
+ 
+ */
 func getMessages(theView: UserMessageViewController){
     let username = [
         "username" : myUsername
@@ -207,6 +302,24 @@ func getMessages(theView: UserMessageViewController){
     }
 }
 
+/**
+ HTTP request to delete messages
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - returns:
+ void
+ 
+ - parameters:
+    - stringOfIDs: the message ids which are to be deleted
+ 
+ - version:
+ 1.0
+ 
+ stringOfIDs can have one or more messages
+ 
+ */
 func deleteMessagesFromDatabase(stringOfIDs: String){
     let messages = [
         "messageIDs" : stringOfIDs

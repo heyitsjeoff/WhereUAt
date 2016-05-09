@@ -20,7 +20,7 @@ var myUsername = ""
  1.0
  */
 class Variables{
-    static let SERVER = "http://152.117.218.105:3000"
+    static let SERVER = "http://where-u-at.herokuapp.com"
     static let WSSERVER = "ws://152.117.218.105:8081"
     static let AUTHENTICATE = SERVER + "/api/authenticate"
     static let CREATE = SERVER + "/api/create_account"
@@ -31,9 +31,6 @@ class Variables{
     static let SENDMESSAGE = SERVER + "/api/send_message"
     static let GETMESSAGES = SERVER + "/api/get_messages"
     static let DELETEMESSAGES = SERVER + "/api/delete_messages"
-    static let FAILED = 0
-    static let SUCCESS = 1
-    static let NOTCONNECTED = 2
 }
 
 // MARK: - Functions
