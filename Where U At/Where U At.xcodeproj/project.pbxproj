@@ -100,17 +100,20 @@
 		2EB3030A1C83723800BF65AF /* Where U At */ = {
 			isa = PBXGroup;
 			children = (
+				2EB3030B1C83723900BF65AF /* AppDelegate.swift */,
+				2EB303151C83723900BF65AF /* Assets.xcassets */,
 				2E5F879D1C8DCFCC00A4B068 /* CallBack.swift */,
-				2E0215211CCC534C0099928F /* CreditsViewController.swift */,
-				2E4A74D61C87512200E46C39 /* DataTransfer.swift */,
-				2E928B881CCF202800CFA496 /* CoreDataSaves.swift */,
 				2EF6DBE11CD3F78C006CBDB0 /* CoreDataDelete.swift */,
 				2EF6DBDF1CD3F72A006CBDB0 /* CoreDataLoad.swift */,
-				2EB303121C83723900BF65AF /* Where_U_At.xcdatamodeld */,
+				2E928B881CCF202800CFA496 /* CoreDataSaves.swift */,
+				2E0215211CCC534C0099928F /* CreditsViewController.swift */,
+				2E4A74D61C87512200E46C39 /* DataTransfer.swift */,
 				2E59BFF81C87B96D003E4E71 /* Define.swift */,
 				2EDA43A21C8B9F00002FEBA7 /* Friend.swift */,
 				2EDA439E1C8B9C5D002FEBA7 /* FriendTableViewCell.swift */,
 				2EDA43A01C8B9EB3002FEBA7 /* FriendTableViewController.swift */,
+				2EB3031A1C83723900BF65AF /* Info.plist */,
+				2EB303171C83723900BF65AF /* LaunchScreen.storyboard */,
 				2EB3030F1C83723900BF65AF /* Main.storyboard */,
 				2E02151F1CCA77320099928F /* MapKitViewController.swift */,
 				2EDA43991C8B82FF002FEBA7 /* Message.swift */,
@@ -121,10 +124,7 @@
 				2EF8945A1CBB15FC00344F68 /* Socket.swift */,
 				2E8092C91CC84EF600DC6572 /* Thread.swift */,
 				2EDA439C1C8B95A7002FEBA7 /* UserMessageViewController.swift */,
-				2EB3030B1C83723900BF65AF /* AppDelegate.swift */,
-				2EB303151C83723900BF65AF /* Assets.xcassets */,
-				2EB3031A1C83723900BF65AF /* Info.plist */,
-				2EB303171C83723900BF65AF /* LaunchScreen.storyboard */,
+				2EB303121C83723900BF65AF /* Where_U_At.xcdatamodeld */,
 				2EDA439B1C8B94BA002FEBA7 /* Where-U-At-Bridging-Header.h */,
 			);
 			path = "Where U At";
