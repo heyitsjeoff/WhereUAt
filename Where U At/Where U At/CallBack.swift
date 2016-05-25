@@ -6,6 +6,16 @@
 //  Copyright © 2016 Jeoff Villanueva. All rights reserved.
 //
 
+/**
+ Functions for callbacks
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - version:
+ 1.0
+ */
+
 import SwiftyJSON
 
 func signInCallBack(jsonResponse: JSON, theView: SignInViewController){

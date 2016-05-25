@@ -9,12 +9,37 @@
 import UIKit
 import CoreData
 
+/**
+ The view controller for the MessageTableView
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - version:
+ 1.0
+ 
+ Will display all message threads that are on the device and access to a menu or the ability to compose a message
+ */
 class MessageTableViewController: UITableViewController {
-    // MARK: Properties
     
+    // MARK: - Properties
     var threads = [Thread]()
     var managedContext: NSManagedObjectContext?
 
+    // MARK: - View Loading
+
+    /**
+     Called after the controller's view is loaded into memory. Calls loadThreads
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     */
     override func viewDidLoad() {
         super.viewDidLoad()
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
@@ -22,20 +47,110 @@ class MessageTableViewController: UITableViewController {
         loadThreads()
     }
     
+    /**
+     Called after the controller's view is loaded into memory. Calls loadThreads
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        animated: If true, the view is being added to the window using an animation
+     
+     - version:
+     1.0
+     */
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         downloadAll()
         loadThreads()
     }
     
+    // MARK: - Button actions
+    
+    /**
+     Function to call when the menu button is pressed. Presents an action sheet of options for the menu
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - sender: the button that was pressed to call the function
+     
+     - version:
+     1.0
+     */
+    @IBAction func menuButtonPressed(sender: AnyObject) {
+        //create action sheet for menu
+        let actionSheet = UIAlertController(title: nil, message: "Menu", preferredStyle: .ActionSheet)
+        
+        //friend option that uses the showFriends segue
+        let friendsAction = UIAlertAction(title: "Friends", style: .Default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            self.performSegueWithIdentifier("showFriends", sender: sender)
+        })
+        
+        //credits option that uses the showCredits segue
+        let creditsAction = UIAlertAction(title: "Credits", style: .Default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            self.performSegueWithIdentifier("showCredits", sender: sender)
+        })
+        
+        //signOut option that uses the signOut segue
+        let signOutAction = UIAlertAction(title: "Sign Out", style: .Default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            self.performSegueWithIdentifier("signOut", sender: sender)
+        })
+        
+        //cancel option
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: {
+            (alert: UIAlertAction!) -> Void in
+        })
+        
+        //add actions to sheet
+        actionSheet.addAction(friendsAction)
+        actionSheet.addAction(creditsAction)
+        actionSheet.addAction(signOutAction)
+        actionSheet.addAction(cancelAction)
+        
+        //show action sheet
+        self.presentViewController(actionSheet, animated: true, completion: nil)
+    }
+    
+    // MARK: Functions
+    
+    /**
+     loads all message threads to the message table view
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     */
     func loadThreads(){
         print("starting to load threads")
+        //specify message as the entity for the fetch
         let messageFetchRequest = NSFetchRequest(entityName: "Message")
-        threads.removeAll()
         do {
-            let results =
-                try managedContext!.executeFetchRequest(messageFetchRequest)
+            //remove all threads before loading
+            threads.removeAll()
+            //results is the data from the fetch
+            let results = try managedContext!.executeFetchRequest(messageFetchRequest)
+            //messages will be an array representation of results
             let messages = results as! [NSManagedObject]
+            
+            //to determine what threads there will be, all messages will be traversed and the username of each
+            //message will be looked at. if the username is not in listOfSenders, append the name and create
+            //the thread for that user, otherwise go to the next message
             var listOfSenders = [String]()
             print("about to start for loop")
             for message in messages{
@@ -45,111 +160,49 @@ class MessageTableViewController: UITableViewController {
                     let thread = Thread(username: name!)
                     threads.append(thread)
                 }
-                //                let name = friend.valueForKey("username") as? String
-                //                let thread = Thread(username: name!)
-                //                threads.append(thread)
             }
             print("done with for loop")
         } catch let error as NSError {
             print("Could not fetch \(error), \(error.userInfo)")
         }
+        //reload the table view
         self.tableView.reloadData()
         print("done loading threads")
     }
     
-    @IBAction func menuButtonPressed(sender: AnyObject) {
-        
-        
-        // 1
-        let actionSheet = UIAlertController(title: nil, message: "Menu", preferredStyle: .ActionSheet)
-        
-        // 2
-        let friendsAction = UIAlertAction(title: "Friends", style: .Default, handler: {
-            (alert: UIAlertAction!) -> Void in
-            self.performSegueWithIdentifier("showFriends", sender: sender)
-        })
-        
-//        let settingsAction = UIAlertAction(title: "Settings", style: .Default, handler: {
-//            (alert: UIAlertAction!) -> Void in
-//            
-//        })
-        
-        let creditsAction = UIAlertAction(title: "Credits", style: .Default, handler: {
-            (alert: UIAlertAction!) -> Void in
-            self.performSegueWithIdentifier("showCredits", sender: sender)
-        })
-        
-        let signOutAction = UIAlertAction(title: "Sign Out", style: .Default, handler: {
-            (alert: UIAlertAction!) -> Void in
-            self.performSegueWithIdentifier("signOut", sender: sender)
-        })
-        
-        //
-        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: {
-            (alert: UIAlertAction!) -> Void in
-        })
-        
-        
-        // 4
-        actionSheet.addAction(friendsAction)
-        //actionSheet.addAction(settingsAction)
-        actionSheet.addAction(creditsAction)
-        actionSheet.addAction(signOutAction)
-        actionSheet.addAction(cancelAction)
-        
-        // 5
-        self.presentViewController(actionSheet, animated: true, completion: nil)
-
-    }
-    
-    func saveMessage(senderUsername: String, text: String, messageID: Int, outgoing: Bool, location: Bool){
-        let entity =  NSEntityDescription.entityForName("Message",
-                                                        inManagedObjectContext:managedContext!)
-        
-        let message = NSManagedObject(entity: entity!,
-                                      insertIntoManagedObjectContext: managedContext)
-        
-        //3
-        message.setValue(senderUsername, forKey: "senderUsername")
-        message.setValue(text, forKey: "text")
-        message.setValue(messageID, forKey: "messageID")
-        message.setValue(outgoing, forKey: "outgoing")
-        message.setValue(location, forKey: "location")
-        
-        //4
-        do {
-            try managedContext!.save()
-            //5
-            //messages.append(message)
-        } catch let error as NSError  {
-            print("Could not save \(error), \(error.userInfo)")
-        }
-    }
-    
+    /**
+     Goes back to the login view and delete all local app storage
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     
+     Called within menuButtonPressed
+     */
     func signOut(){
-        print("Sign out pressed")
-        //1
-        let appDelegate =
-            UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        let managedContext = appDelegate.managedObjectContext
-        
+        //set entity to fetch as login
         let fetchRequest = NSFetchRequest(entityName: "Login")
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         
+        //create a delete request with fetchRequest
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         do {
-            try managedContext.executeRequest(deleteRequest)
-            try managedContext.save()
+            try managedContext!.executeRequest(deleteRequest)
+            try managedContext!.save()
         } catch let error as NSError {
             print("Could not save \(error), \(error.userInfo)")
         }
-        setUsername("")
-        deleteAllFriends()
-        deleteAllMessages()
-        deleteAllPendingRequests()
+        setUsername("") //set the instance of username to blank
+        deleteAllFriends() //delete all friends stored in local storage
+        deleteAllMessages() //delete all messages stored in local storage
+        deleteAllPendingRequests() //delete all pending request stored in local storage
     }
 
-    // MARK: - Table view data source
+    // MARK: - Table view data source functions
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
@@ -159,7 +212,6 @@ class MessageTableViewController: UITableViewController {
         return threads.count
     }
 
-    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cellIdentifier = "MessageTableViewCell"
         let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier,
@@ -178,37 +230,11 @@ class MessageTableViewController: UITableViewController {
         return cell
     }
     
-    // MARK: Segue
-    /*
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        super.prepareForSegue(segue, sender: sender)
-        //let navVc = segue.destinationViewController as! UINavigationController // 1
-        //let messageVc = navVc.viewControllers.first as! UserMessageViewController // 2
-        if let destination = segue.destinationViewController as? UserMessageViewController{
-            if let messageIndex = tableView.indexPathForSelectedRow?.row{
-                destination.senderId = "55"
-                destination.senderDisplayName = messages[messageIndex]?.senderUsername
-            }
-        }
-    }
-    */
-    
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    
     // Override to support editing the table view.
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
             // Delete the row from the data source
             let thread = threads[indexPath.row]
-            print(thread.username)
             deleteAllMessagesFrom(thread.username)
             threads.removeAtIndex(indexPath.row)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
@@ -216,7 +242,6 @@ class MessageTableViewController: UITableViewController {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
     }
-
     
     // MARK: - Navigation
     

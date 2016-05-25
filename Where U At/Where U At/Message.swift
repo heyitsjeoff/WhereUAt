@@ -22,7 +22,7 @@ import CoreData
  1.0
  */
 class Message: NSManagedObject{
-    //MARK: Properties
+    //MARK: - Properties
     
     @NSManaged var senderUsername: String
     @NSManaged var text: String

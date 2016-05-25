@@ -11,33 +11,39 @@ import CoreData
 
 class NewMessageTableViewController: UITableViewController {
     
-    //MARK: - Vars
+    // MARK: - Properties
     
     var friends = [NSManagedObject]()
     
-    //MARK: - Actions
-    
-    
-    
-    //MARK: - View Loading
+    // MARK: - View Loading
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
+    /**
+     Notifies the view controller that its view is about to be added to a view hierarchy and
+     loads an instance of friends to the array
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - animated: If true, the view is being added to the window using an animation
+     
+     - version:
+     1.0
+     */
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        //1
-        let appDelegate =
-            UIApplication.sharedApplication().delegate as! AppDelegate
-        
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let managedContext = appDelegate.managedObjectContext
-        
-        //2
         let fetchRequest = NSFetchRequest(entityName: "Friend")
         
-        //3
         do {
             let results =
                 try managedContext.executeFetchRequest(fetchRequest)
@@ -47,11 +53,7 @@ class NewMessageTableViewController: UITableViewController {
         }
     }
     
-    // MARK: - Core Data
-    
-    
-    // MARK: - Table view data source
-    
+    // MARK: - Required table view functions
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cellIdentifier = "FriendTableViewCell"
@@ -69,53 +71,11 @@ class NewMessageTableViewController: UITableViewController {
         
     }
     
-    // MARK: - Alert Functions
-    
-    
-    
-    // MARK: - Section Functions
-    
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return friends.count
         
     }
-    
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
-    
-    /*
-     // Override to support editing the table view.
-     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-     if editingStyle == .Delete {
-     // Delete the row from the data source
-     tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-     } else if editingStyle == .Insert {
-     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-     }
-     }
-     */
-    
-    /*
-     // Override to support rearranging the table view.
-     override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-     
-     }
-     */
-    
-    /*
-     // Override to support conditional rearranging of the table view.
-     override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-     // Return false if you do not want the item to be re-orderable.
-     return true
-     }
-     */
-    
     
      // MARK: - Navigation
      

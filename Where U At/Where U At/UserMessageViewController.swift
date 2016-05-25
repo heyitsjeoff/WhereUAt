@@ -66,7 +66,7 @@ class UserMessageViewController: JSQMessagesViewController, CLLocationManagerDel
         }else{
             self.senderDisplayName = "Person"
         }
-        self.senderId = "1234"
+        self.senderId = "1234" //arbitrary number string used by JSQ to identify which messages are from the user
         self.collectionView!.collectionViewLayout.outgoingAvatarViewSize = CGSizeZero; //sets the avatar image size for outgoing messages to nothing
         self.collectionView!.collectionViewLayout.incomingAvatarViewSize = CGSizeZero; //sets the avatar image size for incoming messages to nothing
         self.inputToolbar!.contentView?.leftBarButtonItem = JSQMessagesToolbarButtonFactory.defaultAccessoryButtonItem()
@@ -83,19 +83,8 @@ class UserMessageViewController: JSQMessagesViewController, CLLocationManagerDel
         startGettingPendingMessages()
     }
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        thread = Thread(username: username!)
-        messages = thread!.getMessagesArray()
-    }
-    
-    
-    func getPendingMessages(){
-        getMessages(self)
-    }
-    
     /**
-     Saves a list of messages
+     Sets the local instance of thread and messages
      
      - Author:
      Jeoff Villanueva
@@ -104,28 +93,18 @@ class UserMessageViewController: JSQMessagesViewController, CLLocationManagerDel
      void
      
      - parameters:
-        - list: JSON that contains an array of messages
+        - animated: If true, the view is being added to the window using an animation.
      
      - version:
      1.0
-     This function will call deleteMessagesFromDatabase. This function receives a string created by this function. The string will contain the message IDs to delete from the database
      */
-    func saveJSONMessages(list: JSON){
-        let messages = list.arrayValue //gets the array value of list and assigns it to messages
-        var stringOfIDs = "" //create an empty string to begin concat
-        for message in messages{
-            let sender = message["sender"].description //description used to get string value of sender
-            let text = message["text"].description //description used to get string value of text
-            let id = message["id"].int //int used to get int value of id
-            let isLocation = message["isLocation"].boolValue //boolValue used to get bool value of isLocatoin
-            saveMessage(sender, text: text, messageID: id!, outgoing: false, location: isLocation) //call save message with extracted data
-            stringOfIDs += message["id"].description + "," //concat message id after saveMessage called to prepare for deletion
-        }
-        let truncated = String(stringOfIDs.characters.dropLast())//used to remove a trailing comma
-        if(stringOfIDs != ""){
-            deleteMessagesFromDatabase(truncated)
-        }
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        thread = Thread(username: username!)
+        messages = thread!.getMessagesArray()
     }
+    
+    //MARK: - Buttons
     
     /**
      Performs a segue to a MapKitView
@@ -193,6 +172,32 @@ class UserMessageViewController: JSQMessagesViewController, CLLocationManagerDel
     }
     
     /**
+     Function called when the Send button is pressed
+     
+     - Author:
+     JSQ with modifications by Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - button: the UIButton pressed
+        - withMessageText text: the message that was in the text field
+        - senderId: the id of the sender
+        - senderDisplayName: the name of the sender
+        - date: the data the message was sent
+     
+     - version:
+     1.0
+     */
+    override func didPressSendButton(button: UIButton!, withMessageText text: String!, senderId: String!, senderDisplayName: String!, date: NSDate!)
+    {
+        sendMessage(username, text: text, location: false, theView: self)
+    }
+    
+    // MARK: Location Functions
+    
+    /**
      Requests the user for the location interval for sending location
      
      - Author:
@@ -221,8 +226,8 @@ class UserMessageViewController: JSQMessagesViewController, CLLocationManagerDel
         
         //create an action to allow the start of broadcasting
         let start = UIAlertAction(title: "Start",
-                                style: .Default,
-                                handler: { (action:UIAlertAction) -> Void in
+                                  style: .Default,
+                                  handler: { (action:UIAlertAction) -> Void in
                                     let textField = alert.textFields!.first
                                     self.setBroadcastInterval(textField!.text!)
                                     
@@ -281,44 +286,6 @@ class UserMessageViewController: JSQMessagesViewController, CLLocationManagerDel
         timer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: #selector(self.sendLocation), userInfo: nil, repeats: true)
     }
     
-    /**
-     Start the timer to poll data
-     
-     - Author:
-     Jeoff Villanueva
-     
-     - returns:
-     void
-     
-     - version:
-     1.0
-     
-     called by viewDidLoad
-     */
-    func startGettingPendingMessages(){
-        //start getTimer
-        getTimer = NSTimer.scheduledTimerWithTimeInterval(getInterval, target: self, selector: #selector(self.getPendingMessages), userInfo: nil, repeats: true)
-    }
-    
-    /**
-     Stops the timer for the broadcast interval. Sets isBroadcasting to false and broadcastInterval to nil
-     
-     - Author:
-     Jeoff Villanueva
-     
-     - returns:
-     void
-     
-     - version:
-     1.0
-     
-     Is called by locationAction within didPressAccessoryButton
-     */
-    func stopBroadcasting(){
-        broadcastInterval = nil;
-        timer.invalidate() //stops timer
-        isBroadcasting = false
-    }
     
     /**
      Requests the location of the device
@@ -363,17 +330,47 @@ class UserMessageViewController: JSQMessagesViewController, CLLocationManagerDel
         sendMessage(username, text: coordinate, location: true, theView: self)
     }
     
+    /**
+     Tells the delegate that new location data is available.
+     
+     - returns:
+     void
+     
+     - parameters:
+        - manager: The location manager object that was unable to retrieve the location.
+        - locations: An array of CLLocation objects containing the location data.
+     
+     - version:
+     1.0
+     
+     Must be implemented when using CLLocationManagerDelegate
+     */
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         myLocation = locations.last
         captureLocation(myLocation!)//called to set myLocation and continue chain to send location
     }
     
+    /**
+     Tells the delegate that the location manager was unable to retrieve a location value.
+     
+     - returns:
+     void
+     
+     - parameters:
+        - manager: The location manager object that was unable to retrieve the location.
+        - error: The error object containing the reason the location or heading could not be retrieved
+     
+     - version:
+     1.0
+     
+     Must be implemented when using CLLocationManagerDelegate
+     */
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
         print("Failed to find user's location: \(error.localizedDescription)")
     }
     
     /**
-     Saves a message to the managedObjectContext
+     Stops the timer for the broadcast interval. Sets isBroadcasting to false and broadcastInterval to nil
      
      - Author:
      Jeoff Villanueva
@@ -381,79 +378,15 @@ class UserMessageViewController: JSQMessagesViewController, CLLocationManagerDel
      - returns:
      void
      
-     - parameters:
-        - senderUsername: the username of who is sending the message
-        - text: the text of the message
-        - messageID: the id of the message
-        - outgoing: bool for whether or not the message is outgoing
-        - location: bool for whether or not the message is a location
-     
      - version:
      1.0
      
-     More details
+     Is called by locationAction within didPressAccessoryButton
      */
-    func saveMessage(senderUsername: String, text: String, messageID: Int, outgoing: Bool, location: Bool){
-        //set the entity
-        let entity =  NSEntityDescription.entityForName("Message",
-                                                        inManagedObjectContext:managedContext!)
-        //create an NSManagedObject with entity
-        let message = NSManagedObject(entity: entity!,
-                                      insertIntoManagedObjectContext: managedContext)
-        
-        //sets the values for the message
-        message.setValue(senderUsername, forKey: "senderUsername")
-        message.setValue(text, forKey: "text")
-        message.setValue(messageID, forKey: "messageID")
-        message.setValue(outgoing, forKey: "outgoing")
-        message.setValue(location, forKey: "location")
-        
-        //attempt to save managedContext
-        do {
-            try managedContext!.save()
-        } catch let error as NSError  {
-            print("Could not save \(error), \(error.userInfo)")
-        }
-        thread?.loadMessages(username) //load thread
-        messages = thread!.getMessagesArray() //set messages
-        self.finishSendingMessageAnimated(true) //append new message
-    }
-    
-    /**
-     Converts a message(NSManagedObject) to a JSQMessage and returns it
-     
-     - Author:
-     Jeoff Villanueva
-     
-     - returns:
-     void
-     
-     - parameters:
-        - message: the message to be converted
-     
-     - version:
-     1.0
-     
-     JSQMessageViewController displays JSQMessages only
-     */
-    func messageToJSQ(message: NSManagedObject) -> JSQMessage{
-        let username = message.valueForKey("senderUsername") as? String
-        let text = message.valueForKey("text") as? String
-        let outgoing = message.valueForKey("outgoing") as? Bool
-        var id: String?
-        if(outgoing == true){
-            id = self.senderId
-        }
-        else{
-            id = "14" //some value to distinguish from self for JSQ
-        }
-        return JSQMessage(senderId: id, displayName: username, text: text);
-    }
-    
-    // MARK: - Visual response
-    
-    func messageSent(senderUsername: String, text: String, messageID: Int, location: Bool){
-        saveMessage(senderUsername, text: text, messageID: messageID, outgoing: true, location: location)
+    func stopBroadcasting(){
+        broadcastInterval = nil;
+        timer.invalidate() //stops timer
+        isBroadcasting = false
     }
     
     /**
@@ -489,33 +422,175 @@ class UserMessageViewController: JSQMessagesViewController, CLLocationManagerDel
         }
     }
     
-    //MARK: - Buttons
+    // MARK: Message Functions
     
     /**
-     Function called when the Send button is pressed
+     Calls getMessages which will check the server for pending messages
      
      - Author:
-     JSQ with modifications by Jeoff Villanueva
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     */
+    func getPendingMessages(){
+        getMessages(self)
+    }
+    
+    /**
+     Start the timer to poll data
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     
+     called by viewDidLoad
+     */
+    func startGettingPendingMessages(){
+        //start getTimer
+        getTimer = NSTimer.scheduledTimerWithTimeInterval(getInterval, target: self, selector: #selector(self.getPendingMessages), userInfo: nil, repeats: true)
+    }
+    
+    /**
+     Saves a list of messages
+     
+     - Author:
+     Jeoff Villanueva
      
      - returns:
      void
      
      - parameters:
-        - button: the UIButton pressed
-        - withMessageText text: the message that was in the text field
-        - senderId: the id of the sender
-        - senderDisplayName: the name of the sender
-        - date: the data the message was sent
+        - list: JSON that contains an array of messages
+     
+     - version:
+     1.0
+     This function will call deleteMessagesFromDatabase. This function receives a string created by this function. The string will contain the message IDs to delete from the database
+     */
+    func saveJSONMessages(list: JSON){
+        let messages = list.arrayValue //gets the array value of list and assigns it to messages
+        var stringOfIDs = "" //create an empty string to begin concat
+        for message in messages{
+            let sender = message["sender"].description //description used to get string value of sender
+            let text = message["text"].description //description used to get string value of text
+            let id = message["id"].int //int used to get int value of id
+            let isLocation = message["isLocation"].boolValue //boolValue used to get bool value of isLocatoin
+            saveMessage(sender, text: text, messageID: id!, outgoing: false, location: isLocation) //call save message with extracted data
+            stringOfIDs += message["id"].description + "," //concat message id after saveMessage called to prepare for deletion
+        }
+        let truncated = String(stringOfIDs.characters.dropLast())//used to remove a trailing comma
+        if(stringOfIDs != ""){
+            deleteMessagesFromDatabase(truncated)
+        }
+    }
+    
+    /**
+     Saves a message to the managedObjectContext
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - senderUsername: the username of who is sending the message
+        - text: the text of the message
+        - messageID: the id of the message
+        - outgoing: bool for whether or not the message is outgoing
+        - location: bool for whether or not the message is a location
      
      - version:
      1.0
      */
-    override func didPressSendButton(button: UIButton!, withMessageText text: String!, senderId: String!, senderDisplayName: String!, date: NSDate!)
-    {
-        //let message = JSQMessage(senderId: self.senderId, displayName: self.senderDisplayName, text: text);
-        sendMessage(username, text: text, location: false, theView: self)
-        //self.finishSendingMessageAnimated(true);
+    func saveMessage(senderUsername: String, text: String, messageID: Int, outgoing: Bool, location: Bool){
+        //set the entity
+        let entity =  NSEntityDescription.entityForName("Message",
+                                                        inManagedObjectContext:managedContext!)
+        //create an NSManagedObject with entity
+        let message = NSManagedObject(entity: entity!,
+                                      insertIntoManagedObjectContext: managedContext)
+        
+        //sets the values for the message
+        message.setValue(senderUsername, forKey: "senderUsername")
+        message.setValue(text, forKey: "text")
+        message.setValue(messageID, forKey: "messageID")
+        message.setValue(outgoing, forKey: "outgoing")
+        message.setValue(location, forKey: "location")
+        
+        //attempt to save managedContext
+        do {
+            try managedContext!.save()
+        } catch let error as NSError  {
+            print("Could not save \(error), \(error.userInfo)")
+        }
+        thread!.loadMessages(username) //load thread
+        messages = thread!.getMessagesArray() //set messages
+        self.finishSendingMessageAnimated(true) //append new message
     }
+    
+    /**
+     Converts a message(NSManagedObject) to a JSQMessage and returns it
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - message: the message to be converted
+     
+     - version:
+     1.0
+     
+     JSQMessageViewController displays JSQMessages only
+     */
+    func messageToJSQ(message: NSManagedObject) -> JSQMessage{
+        let username = message.valueForKey("senderUsername") as? String
+        let text = message.valueForKey("text") as? String
+        let outgoing = message.valueForKey("outgoing") as? Bool
+        var id: String?
+        if(outgoing == true){
+            id = self.senderId
+        }
+        else{
+            id = "14" //some value to distinguish from self for JSQ
+        }
+        return JSQMessage(senderId: id, displayName: username, text: text);
+    }
+    
+    /**
+     Calls saveMessage
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - senderUsername: the username of who is sending the message
+        - text: the text of the message
+        - messageID: the id of the message
+        - outgoing: bool for whether or not the message is outgoing
+        - location: bool for whether or not the message is a location
+     
+     - version:
+     1.0
+     */
+    func messageSent(senderUsername: String, text: String, messageID: Int, location: Bool){
+        saveMessage(senderUsername, text: text, messageID: messageID, outgoing: true, location: location)
+    }
+    
     
     
     // MARK: - Collection View Required Functions
@@ -550,9 +625,6 @@ class UserMessageViewController: JSQMessagesViewController, CLLocationManagerDel
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
         let cell = super.collectionView(collectionView, cellForItemAtIndexPath: indexPath);
-        
-        // This doesn't really do anything, but it's a good point for customization
-        //let message = self.messages[indexPath.item];
         
         return cell;
     }

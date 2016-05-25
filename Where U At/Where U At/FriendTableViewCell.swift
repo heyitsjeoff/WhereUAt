@@ -8,6 +8,15 @@
 
 import UIKit
 
+/**
+ A UITableViewCell for displaying friend username
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - version:
+ 1.0
+ */
 class FriendTableViewCell: UITableViewCell {
     // MARK: Properties
     @IBOutlet weak var friendUsername: UILabel!
@@ -16,13 +25,10 @@ class FriendTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
 
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
 
 }

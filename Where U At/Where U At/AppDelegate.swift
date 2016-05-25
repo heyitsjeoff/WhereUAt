@@ -16,9 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
-        print("AppDelegate.swift: did finish launching with options")
         
+        //check if the user is signed in already
         let fetchRequest = NSFetchRequest(entityName: "Login")
         do {
             let result =

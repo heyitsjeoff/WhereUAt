@@ -8,6 +8,16 @@
 import CoreData
 import SwiftyJSON
 
+/**
+ Consists of Core Data functions for saving
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - version:
+ 1.0
+ */
+
 let appDelegate =
     UIApplication.sharedApplication().delegate as! AppDelegate
 
@@ -26,23 +36,19 @@ let managedContext = appDelegate.managedObjectContext
  void
  
  - parameters:
- - name: the name of the friend to be saved
+    - name: the name of the friend to be saved
  
  - version:
  1.0
  */
 func saveFriend(name: String) -> NSManagedObject{
-    //2
     let entity =  NSEntityDescription.entityForName("Friend",
                                                     inManagedObjectContext:managedContext)
     
     let friend = NSManagedObject(entity: entity!,
                                  insertIntoManagedObjectContext: managedContext)
-    
-    //3
     friend.setValue(name, forKey: "username")
     
-    //4
     do {
         try managedContext.save()
     } catch let error as NSError  {
@@ -67,17 +73,14 @@ func saveFriend(name: String) -> NSManagedObject{
  1.0
  */
 func savePendingFriendRequest(name: String) -> NSManagedObject{
-    //2
     let entity =  NSEntityDescription.entityForName("PendingFriend",
                                                     inManagedObjectContext:managedContext)
     
     let friend = NSManagedObject(entity: entity!,
                                  insertIntoManagedObjectContext: managedContext)
     
-    //3
     friend.setValue(name, forKey: "username")
     
-    //4
     do {
         try managedContext.save()
     } catch let error as NSError  {
@@ -87,6 +90,7 @@ func savePendingFriendRequest(name: String) -> NSManagedObject{
 }
 
 // MARK: - Updates
+
 /**
  Updates the local storage with the names of all pending requests for the signed in user
  
@@ -97,7 +101,7 @@ func savePendingFriendRequest(name: String) -> NSManagedObject{
  void
  
  - parameters:
- - listOfNames: an array of names that represents the pending requests list
+    - listOfNames: an array of names that represents the pending requests list
  
  - version:
  1.0
@@ -121,7 +125,7 @@ func updatePendingRequests(listOfNames: [String]){
  void
  
  - parameters:
- - listOfNames: an array of names that represents the friends list
+    - listOfNames: an array of names that represents the friends list
  
  - version:
  1.0
@@ -135,12 +139,28 @@ func updateFriendsList(listOfNames: [String]){
     }
 }
 
+// MARK: - Messages
+
+/**
+ Saves a list of messages
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - returns:
+ void
+ 
+ - parameters:
+ - list: JSON that contains an array of messages
+ 
+ - version:
+ 1.0
+ This function will call deleteMessagesFromDatabase. This function receives a string created by this function. The string will contain the message IDs to delete from the database
+ */
 func saveJSONMessages(list: JSON){
     let messages = list.arrayValue
     var stringOfIDs = ""
     for message in messages{
-        
-        //senderUsername: String, text: String, messageID: Int, outgoing: Bool, location: Bool
         let sender = message["sender"].description
         let text = message["text"].description
         let id = message["id"].int
@@ -152,6 +172,25 @@ func saveJSONMessages(list: JSON){
     deleteMessagesFromDatabase(truncated)
 }
 
+/**
+ Saves a message to the managedObjectContext
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - returns:
+ void
+ 
+ - parameters:
+    - senderUsername: the username of who is sending the message
+    - text: the text of the message
+    - messageID: the id of the message
+        - outgoing: bool for whether or not the message is outgoing
+ - location: bool for whether or not the message is a location
+ 
+ - version:
+ 1.0
+ */
 func saveMessage(senderUsername: String, text: String, messageID: Int, outgoing: Bool, location: Bool){
     let entity =  NSEntityDescription.entityForName("Message",
                                                     inManagedObjectContext:managedContext)
@@ -159,18 +198,14 @@ func saveMessage(senderUsername: String, text: String, messageID: Int, outgoing:
     let message = NSManagedObject(entity: entity!,
                                   insertIntoManagedObjectContext: managedContext)
     
-    //3
     message.setValue(senderUsername, forKey: "senderUsername")
     message.setValue(text, forKey: "text")
     message.setValue(messageID, forKey: "messageID")
     message.setValue(outgoing, forKey: "outgoing")
     message.setValue(location, forKey: "location")
     
-    //4
     do {
         try managedContext.save()
-        //5
-        //messages.append(message)
     } catch let error as NSError  {
         print("Could not save \(error), \(error.userInfo)")
     }

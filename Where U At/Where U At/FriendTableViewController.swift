@@ -9,29 +9,50 @@
 import UIKit
 import CoreData
 
+/**
+ The view controller for the FriendTableView
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - version:
+ 1.0
+ 
+ Will display all friends and pending friend requests, as well as an option to add a friend
+ */
 class FriendTableViewController: UITableViewController {
     
-    //MARK: - Vars
-    
+    // MARK: - Properties
     var friends = [NSManagedObject]()
     var pendingRequests = [NSManagedObject]()
-    
     let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
     var managedContext: NSManagedObjectContext?
     
-    //MARK: - Views
+    // MARK: - View Loading
     
+    /**
+     Called after the controller's view is loaded into memory.
+     Checks for pending friend requests and gets an updated friends list
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     */
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         managedContext = appDelegate.managedObjectContext
-        
         getFriendsList(self)
         getPendingRequests(self)
     }
     
     /**
-     checks the local storage and updates the view with the friends list
+     Notifies the view controller that its view is about to be added to a view hierarchy.
+     Checks the local storage and updates the view with the friends list
      
      - Author:
      Jeoff Villanueva
@@ -40,23 +61,86 @@ class FriendTableViewController: UITableViewController {
      void
      
      - parameters:
-     - animated: boolean for wheter or not to have animation
+        - animated: If true, the view is being added to the window using an animation.
      
      - version:
      1.0
      */
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        
         loadFriendIntoControllerArray()
         loadPendingRequestsIntoControllerArray()
     }
     
-    func loadFriendIntoControllerArray(){
-        //2
-        let fetchRequest = NSFetchRequest(entityName: "Friend")
+    // MARK: - Buttons
+    
+    /**
+     Button action to send a friend request
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - sender: the UIBarButtonItem that is pressed
+     
+     - version:
+     1.0
+     
+     After the button is pressed, an alert will be presented allowing the user to 
+     enter in a username to send a friend request to
+     */
+    @IBAction func sendFriendRequest(sender: UIBarButtonItem) {
+        //create an alert
+        let alert = UIAlertController(title: "Add a friend",
+            message: "Enter your friend's username",
+            preferredStyle: .Alert)
         
-        //3
+        let cancelAction = UIAlertAction(title: "Cancel",
+            style: .Default) { (action: UIAlertAction) -> Void in
+        }
+        
+        //add action
+        let add = UIAlertAction(title: "Add",
+            style: .Default,
+            handler: { (action:UIAlertAction) -> Void in
+                
+                let textField = alert.textFields!.first
+                print(textField!.text!)
+                sendRequest(textField!.text!, theView: self)
+        })
+        
+        //text field
+        alert.addTextFieldWithConfigurationHandler {
+            (textField: UITextField) -> Void in
+        }
+        
+        //add actions to alert
+        alert.addAction(cancelAction)
+        alert.addAction(add)
+        
+        presentViewController(alert,
+            animated: true,
+            completion: nil)
+    }
+    
+    /**
+     Checks the local storage for friends and loads them into the controller's array
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     */
+    func loadFriendIntoControllerArray(){
+        //set up the fetch for Friend
+        let fetchRequest = NSFetchRequest(entityName: "Friend")
         do {
             let results =
                 try managedContext!.executeFetchRequest(fetchRequest)
@@ -66,9 +150,21 @@ class FriendTableViewController: UITableViewController {
         }
     }
     
+    /**
+     Checks the local storage for pending requests and loads them into the controller's array
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     */
     func loadPendingRequestsIntoControllerArray(){
+        //set up the fetch for PendingFriend
         let fetchRequestPending = NSFetchRequest(entityName: "PendingFriend")
-        
         do {
             let results =
                 try managedContext!.executeFetchRequest(fetchRequestPending)
@@ -78,7 +174,7 @@ class FriendTableViewController: UITableViewController {
         }
     }
     
-    // MARK: - Actions
+    // MARK: - Alert functions
     
     /**
      Presents an alert for a user to respond to a friend request. An accept or decline will be sent
@@ -129,99 +225,6 @@ class FriendTableViewController: UITableViewController {
                               animated: true,
                               completion: nil)
     }
-    
-    /**
-     Button action to send a friend request
-     
-     - Author:
-     Jeoff Villanueva
-     
-     - returns:
-     void
-     
-     - parameters:
-        - sender: the UIBarButtonItem that is pressed
-     
-     - version:
-     1.0
-     
-     After the button is pressed, an alert will be presented allowing the user to 
-     enter in a username to send a friend request to
-     */
-    @IBAction func sendFriendRequest(sender: UIBarButtonItem) {
-        let alert = UIAlertController(title: "Add a friend",
-            message: "Enter your friend's username",
-            preferredStyle: .Alert)
-        
-        let cancelAction = UIAlertAction(title: "Cancel",
-            style: .Default) { (action: UIAlertAction) -> Void in
-        }
-        
-        let add = UIAlertAction(title: "Add",
-            style: .Default,
-            handler: { (action:UIAlertAction) -> Void in
-                
-                let textField = alert.textFields!.first
-                print(textField!.text!)
-                sendRequest(textField!.text!, theView: self)
-                //self.tableView.reloadData()
-        })
-        
-        alert.addTextFieldWithConfigurationHandler {
-            (textField: UITextField) -> Void in
-        }
-        
-        alert.addAction(cancelAction)
-        alert.addAction(add)
-        
-        presentViewController(alert,
-            animated: true,
-            completion: nil)
-    }
-    
-    // MARK: - Updating
-    
-    /**
-     Updates the local storage with the names of all friends for the signed in user
-     
-     - Author:
-     Jeoff Villanueva
-     
-     - returns:
-     void
-     
-     - parameters:
-        - listOfNames: an array of names that represents the friends list
-     
-     - version:
-     1.0
-     */
-    func updateFriendsListArray(listOfNames: [String]){
-        updateFriendsList(listOfNames)
-        loadFriendIntoControllerArray()
-    }
-    
-    /**
-     Updates the local storage with the names of all pending requests for the signed in user
-     
-     - Author:
-     Jeoff Villanueva
-     
-     - returns:
-     void
-     
-     - parameters:
-     - listOfNames: an array of names that represents the pending requests list
-     
-     - version:
-     1.0
-     */
-    func updatePendingRequestsArray(listOfNames: [String]){
-        updatePendingRequests(listOfNames)
-        loadPendingRequestsIntoControllerArray()
-    }
-    
-    // MARK: - Alert Functions
     
     /**
      Presents an alert based on the success status of sending a friend request
@@ -321,7 +324,51 @@ class FriendTableViewController: UITableViewController {
         }
     }
     
-    // MARK: - Table view data source
+    // MARK: - Updating
+    
+    /**
+     Updates the local storage with the names of all friends for the signed in user
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - listOfNames: an array of names that represents the friends list
+     
+     - version:
+     1.0
+     */
+    func updateFriendsListArray(listOfNames: [String]){
+        updateFriendsList(listOfNames)
+        loadFriendIntoControllerArray()
+    }
+    
+    /**
+     Updates the local storage with the names of all pending requests for the signed in user
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - listOfNames: an array of names that represents the pending requests list
+     
+     - version:
+     1.0
+     */
+    func updatePendingRequestsArray(listOfNames: [String]){
+        updatePendingRequests(listOfNames)
+        loadPendingRequestsIntoControllerArray()
+    }
+    
+    
+    
+    // MARK: - Required table view functions
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cellIdentifier = "FriendTableViewCell"
@@ -353,8 +400,6 @@ class FriendTableViewController: UITableViewController {
         }
     }
     
-    // MARK: - Section Functions
-    
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 2
     }
@@ -376,15 +421,5 @@ class FriendTableViewController: UITableViewController {
             return "Pending Friend Requests"
         }
     }
-    
-    /*
-    // MARK: - Navigation
-    
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-    // Get the new view controller using segue.destinationViewController.
-    // Pass the selected object to the new view controller.
-    }
-    */
     
 }

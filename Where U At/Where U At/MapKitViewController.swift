@@ -11,7 +11,7 @@ import MapKit
 import CoreLocation
 
 /**
- A view controller to handle the map kit
+ A view controller to handle the map kit and display user location
  
  - Author:
  Jeoff Villanueva
@@ -21,6 +21,7 @@ import CoreLocation
  */
 class MapKitViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
 
+    // MARK: - Properties
     @IBOutlet weak var mapKitView: MKMapView!
     
     var userLatitude: String!
@@ -31,6 +32,19 @@ class MapKitViewController: UIViewController, MKMapViewDelegate, CLLocationManag
     
     let locationManager = CLLocationManager()
     
+    /**
+     Called after the controller's view is loaded into memory.
+     Performs locationManager initialization
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     */
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -38,27 +52,51 @@ class MapKitViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.locationManager.requestWhenInUseAuthorization()
-        //self.locationManager.startUpdatingLocation()
-        
-        setLocation()
-        
         self.mapKitView.showsUserLocation = true
     }
     
+    /**
+     Notifies the view controller that its view is about to be added to a view hierarchy and
+     tries to sets friend location
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - animated: If true, the view is being added to the window using an animation.
+     
+     - version:
+     1.0
+     */
+    override func viewWillAppear(animated: Bool) {
+        setLocation()
+    }
+    
+    /**
+     Places a pin on the map to show the location of the friend
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     */
     func setLocation(){
-        print("setLocation called")
-        print("setting center")
-        
         if(userLatitude != nil && userLongitude != nil){
-        
-            print("lat to use: " + userLatitude)
-            print("lon to use: " + userLongitude)
+            //creates a center for the pin of the friend
             let center = CLLocationCoordinate2D(latitude: Double(userLatitude)!, longitude: Double(userLongitude)!)
-        
+            //sets a region for the view to be zoomed in on
             let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
         
             self.mapKitView.setRegion(region, animated: true)
-        
+            
+            //create and set pin
             let userPin = MKPointAnnotation()
             userPin.coordinate = center
             userPin.title = username
@@ -67,40 +105,32 @@ class MapKitViewController: UIViewController, MKMapViewDelegate, CLLocationManag
         }
         else{
             if(myLatitude != nil && myLongitude != nil){
+                //creates a center for where the user is at
                 let center = CLLocationCoordinate2D(latitude: Double(myLatitude)!, longitude: Double(myLongitude)!)
-            
+                //sets a region for the view to be zoomed in on
                 let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
-            
+        
                 self.mapKitView.setRegion(region, animated: true)
             }
         }
     }
     
-    override func didReceiveMemoryWarning()
-    {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    // MARK: - Location Delegate Methods
-//    
-//    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
-//    {
-//        let location = locations.last
-//        
-//        //let lat = "47.14"
-//        //let lon = "-122.44"
-//        
-//        //let center = CLLocationCoordinate2D(latitude: Double(lat)!, longitude: Double(lon)!)
-//        
-//        let center = CLLocationCoordinate2D(latitude: location!.coordinate.latitude, longitude: location!.coordinate.longitude)
-//        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
-//        
-//        self.mapKitView.setRegion(region, animated: true)
-//        
-//        self.locationManager.stopUpdatingLocation()
-//    }
-    
+    /**
+     Tells the delegate that the location manager was unable to retrieve a location value.
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - manager: The location manager object that was unable to retrieve the location.
+        - error: The error object containing the reason the location or heading could not be retrieved.
+     
+     - version:
+     1.0
+     */
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError)
     {
         print("Error: " + error.localizedDescription)

@@ -1,6 +1,5 @@
 import UIKit
 import CoreData
-import Starscream
 
 /**
  The view controller for the SignInView
@@ -14,7 +13,7 @@ import Starscream
  The sign in view will allow the user to either create an account or sign in. Once either
  of those two actions are performed, the user will be signed in
  */
-class SignInViewController: UIViewController, WebSocketDelegate{
+class SignInViewController: UIViewController{
 
     @IBOutlet weak var usernameTF: UITextField! //text field for username
     @IBOutlet weak var passwordTF: UITextField! //text field for password
@@ -23,34 +22,57 @@ class SignInViewController: UIViewController, WebSocketDelegate{
     @IBOutlet weak var password2TF: UITextField! //text field for password2
     var signingIn = true //boolean state to determine if the user is signing in or creating an account
     let variables = Variables.self // declaration of static variables class
+    var managedContext: NSManagedObjectContext!
     
-    //Socket
+    // MARK: View loads
     
-    let socket = WebSocket(url: NSURL(string: "ws://152.117.218.105:3001")!)
-    
-    func websocketDidConnect(ws: WebSocket) {
-        print("websocket is connected")
+    /**
+     Notifies the view controller that its view was added to a view hierarchy and calls
+     check if signed in
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - animated: If true, the view was added to the window using an animation
+     
+     - version:
+     1.0
+     */
+    override func viewDidAppear(animated: Bool) {
+        checkIfSignedIn()
     }
     
-    func websocketDidDisconnect(ws: WebSocket, error: NSError?) {
-        if let e = error {
-            print("websocket is disconnected: \(e.localizedDescription)")
-        } else {
-            print("websocket disconnected")
-        }
+    /**
+     hides the second password textfield and changes the transparency for all three text fields
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     
+     Called after the controller's view is loaded into memory.
+     */
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        password2TF.hidden = true;
+        usernameTF.alpha = 0.5
+        passwordTF.alpha = 0.5
+        password2TF.alpha = 0.5
+        let appDelegate =
+            UIApplication.sharedApplication().delegate as! AppDelegate
+        managedContext = appDelegate.managedObjectContext
+        checkIfSignedIn()
     }
     
-    func websocketDidReceiveMessage(ws: WebSocket, text: String) {
-        print("Received text: \(text)")
-    }
-    
-    func websocketDidReceiveData(ws: WebSocket, data: NSData) {
-        print("Received data: \(data.length)")
-    }
-    //add imports and delegate for websocket if uncommenting
-    //Socket
-    
-    ///Will either attempt to sign the user in or create an account, based on the current status
+    // MARK: Buttons
     
     /**
      Called when the Sign In Button is selected
@@ -93,10 +115,7 @@ class SignInViewController: UIViewController, WebSocketDelegate{
                 createAccount(usernameTF.text!,password:  passwordTF.text!, theView: self)
             }//passwords do match
         }//create account action
-        
     }
-    
-    /// Modifies the current window from signing in to creating an account
     
     /**
      Called when the Create Account Button is selected. Changes the current view from a signing in view to a create an account view
@@ -130,25 +149,38 @@ class SignInViewController: UIViewController, WebSocketDelegate{
         }//switch to sign in view
     }
     
-    /**
-    Presents an alert based on the success status of a login attempt. A successful login will transition to the
-    message table view and an unsuccessful login will leave the user at the sign in view
+    // MARK: Alert notifications
     
-    @param success the success status of the login attempt
-    */
+    /**
+     Presents an alert based on the success status of a login attempt. A successful login will transition to the
+     message table view and an unsuccessful login will leave the user at the sign in view
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - parameters:
+        - success: the success status of the login attempt
+     
+     - version:
+     1.0
+     */
     func alertLogin(success: String){
         if(success == "true"){
             setCredentials(usernameTF.text!, password: passwordTF.text!)
-            downloadAll()
+            downloadAll() //get pending data
+            
+            //create an alert notifying of a successful login
             let alert = UIAlertController(title: "Where U At",
                 message: "Welcome to the motherland!",
                 preferredStyle: .Alert)
             
             let okAction = UIAlertAction(title: "Wavy",
                 style: UIAlertActionStyle.Default) {
-                    UIALertAction in
+                    UIAlertAction in
                     self.performSegueWithIdentifier("MessageThreads", sender: nil)
-                    //-----------
             }
             
             alert.addAction(okAction)
@@ -158,6 +190,7 @@ class SignInViewController: UIViewController, WebSocketDelegate{
                 completion: nil)
         }//sign in successful
         else if(success == "false"){
+            //create an alert notifying of an unsuccessful login
             let alert = UIAlertController(title: "Where U At",
                 message: "Username/password combination is incorrect!",
                 preferredStyle: .Alert)
@@ -196,6 +229,7 @@ class SignInViewController: UIViewController, WebSocketDelegate{
         if(success == "true"){
             setCredentials(usernameTF.text!, password: passwordTF.text!)
             
+            //create an alert notifying of a successful create account
             let alert = UIAlertController(title: "Where U At",
                 message: "Your account has been created!",
                 preferredStyle: .Alert)
@@ -213,6 +247,7 @@ class SignInViewController: UIViewController, WebSocketDelegate{
                 completion: nil)
         }
         else if(success == "false"){
+            //create an alert notifying of an unsuccessful create account
             let alert = UIAlertController(title: "Where U At",
                 message: "That username is already taken",
                 preferredStyle: .Alert)
@@ -242,11 +277,6 @@ class SignInViewController: UIViewController, WebSocketDelegate{
      1.0
      */
     func checkIfSignedIn(){
-        let appDelegate =
-            UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        let managedContext = appDelegate.managedObjectContext
-        
         let fetchRequest = NSFetchRequest(entityName: "Login")
         do {
             let result =
@@ -278,47 +308,21 @@ class SignInViewController: UIViewController, WebSocketDelegate{
      This function will be called by alertLogin or alertCreateAccount
      */
     func setCredentials(username: String, password: String) {
-        //1
-        let appDelegate =
-        UIApplication.sharedApplication().delegate as! AppDelegate
+        let entity =  NSEntityDescription.entityForName("Login", inManagedObjectContext:managedContext)
         
-        let managedContext = appDelegate.managedObjectContext
+        let login = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
         
-        //2
-        let entity =  NSEntityDescription.entityForName("Login",
-            inManagedObjectContext:managedContext)
-        
-        let login = NSManagedObject(entity: entity!,
-            insertIntoManagedObjectContext: managedContext)
-        
-        //3
         login.setValue(username, forKey: "username")
         login.setValue(password, forKey: "password")
         login.setValue(true, forKey: "loginFlag")
         setUsername(usernameTF.text!)
         
-        //4
+        //attempt a managedContext save
         do {
             try managedContext.save()
-            //5
         } catch let error as NSError  {
             print("Could not save \(error), \(error.userInfo)")
         }
-    }
-    
-    override func viewDidAppear(animated: Bool) {
-        checkIfSignedIn()
-    }
-    
-    ///hides the second password textfield and changes the transparency for all three text fields
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        password2TF.hidden = true;
-        usernameTF.alpha = 0.5
-        passwordTF.alpha = 0.5
-        password2TF.alpha = 0.5
-        socket.delegate = self
-        socket.connect()
     }
 
 }

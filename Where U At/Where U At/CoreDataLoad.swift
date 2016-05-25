@@ -6,6 +6,16 @@
 //  Copyright © 2016 Jeoff Villanueva. All rights reserved.
 //
 
+/**
+ Consists of Core Data functions for loading
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - version:
+ 1.0
+ */
+
 import CoreData
 
 func downloadAll(){

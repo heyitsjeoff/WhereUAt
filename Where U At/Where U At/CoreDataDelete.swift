@@ -6,6 +6,16 @@
 //  Copyright © 2016 Jeoff Villanueva. All rights reserved.
 //
 
+/**
+ Consists of Core Data functions for deleting
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - version:
+ 1.0
+ */
+
 import CoreData
 
 // MARK: - Friends
@@ -149,6 +159,24 @@ func deleteAllPendingRequests(){
     }
 }
 
+/**
+ Deletes all pending requests from the local storage
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - returns:
+ void
+ 
+ - parameters:
+    - name: the username of the pending request to be deleted
+ 
+ - version:
+ 1.0
+ 
+ This is called during the update of the storage. The storage is purged of all pending requests to ensure there is
+ no duplicate during update
+ */
 func deletePendingRequest(name: String){
     //1
     let appDelegate =

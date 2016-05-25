@@ -69,6 +69,7 @@ class Thread{
         - username the username of the thread participant
     */
     func loadMessages(username: String){
+        //prepare fetch of messages, but don't grab location messages
         let messageFetchRequest = NSFetchRequest(entityName: "Message")
         let locationPredicate = NSPredicate(format: "location == NO")
         let senderPredicate = NSPredicate(format: "senderUsername == %@", username)
@@ -86,7 +87,20 @@ class Thread{
         }
     }
     
+    /**
+     Sets the lastMessage
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     */
     func setLastMessage(){
+        //prepare fetch messages
         let messageFetchRequest = NSFetchRequest(entityName: "Message")
         let locationPredicate = NSPredicate(format: "location == NO")
         messageFetchRequest.predicate = locationPredicate
@@ -100,6 +114,18 @@ class Thread{
         }
     }
     
+    /**
+     Gets the last message in the thread
+     
+     - Author:
+     Jeoff Villanueva
+     
+     - returns:
+     void
+     
+     - version:
+     1.0
+     */
     func getLastMessage() -> String{
         return lastMessage?.valueForKey("text") as! String
     }

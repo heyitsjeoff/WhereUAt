@@ -19,6 +19,6 @@ import CoreData
  1.0
  */
 class Friend : NSManagedObject{
-    //MARK: Properties
+    //MARK: - Properties
     @NSManaged var username: String
 }

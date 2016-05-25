@@ -6,8 +6,6 @@
 //  Copyright © 2016 Jeoff Villanueva. All rights reserved.
 //
 
-//import Foundation
-
 /**
  Consists of all the HTTP requests methods which will be using Alamofire.
  
@@ -337,6 +335,19 @@ func deleteMessagesFromDatabase(stringOfIDs: String){
 
 // MARK: Getters without views
 
+/**
+ HTTP request to getPendingRequests
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - returns:
+ void
+ 
+ - version:
+ 1.0
+ 
+ */
 func getPendingRequests(){
     let username = [
         "username" : myUsername
@@ -353,6 +364,19 @@ func getPendingRequests(){
     }
 }
 
+/**
+ HTTP request to get the users friends list
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - returns:
+ void
+ 
+ - version:
+ 1.0
+ 
+ */
 func getFriendsList(){
     let username = [
         "username": myUsername
@@ -369,6 +393,19 @@ func getFriendsList(){
     }
 }
 
+/**
+ HTTP request to get pending messages
+ 
+ - Author:
+ Jeoff Villanueva
+ 
+ - returns:
+ void
+ 
+ - version:
+ 1.0
+ 
+ */
 func getMessages(){
     let username = [
         "username" : myUsername

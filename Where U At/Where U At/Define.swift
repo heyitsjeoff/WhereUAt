@@ -6,8 +6,6 @@
 //  Copyright © 2016 Jeoff Villanueva. All rights reserved.
 //
 
-import UIKit
-
 var myUsername = ""
 
 /**
@@ -21,7 +19,6 @@ var myUsername = ""
  */
 class Variables{
     static let SERVER = "http://where-u-at.herokuapp.com"
-    static let WSSERVER = "ws://152.117.218.105:8081"
     static let AUTHENTICATE = SERVER + "/api/authenticate"
     static let CREATE = SERVER + "/api/create_account"
     static let SENDFRIENDREQUEST = SERVER + "/api/send_friend_request"
