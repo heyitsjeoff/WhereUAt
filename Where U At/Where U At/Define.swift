@@ -18,7 +18,7 @@ var myUsername = ""
  1.0
  */
 class Variables{
-    static let SERVER = "http://where-u-at.herokuapp.com"
+    static let SERVER = "[server.url.com]"
     static let AUTHENTICATE = SERVER + "/api/authenticate"
     static let CREATE = SERVER + "/api/create_account"
     static let SENDFRIENDREQUEST = SERVER + "/api/send_friend_request"

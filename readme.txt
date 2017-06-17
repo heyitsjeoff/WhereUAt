@@ -2,6 +2,8 @@ Last working environment configuration 24 May 2016
 OSX Version 10.11.4
 Xcode Version 7.3 (7D175)
 
+Built with Swift 2
+
 To open the project correctly, open "Where U At.xcworkspace" and not the
 Xcode project. The workspace will be opened in Xcode. The simulator should run
 alright, but there might be an issue with getting the application on a physical
